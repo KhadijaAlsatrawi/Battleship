@@ -53,6 +53,8 @@ const player2Grid = [
 let turn
 let gameStatus
 let boardUpdated
+let selectedShip
+let message
 
 /*------------------------ Cached Element References ------------------------*/
 
@@ -66,6 +68,7 @@ const grid2Els = document.querySelectorAll('.grid-box2')
 const playerTurnEl = document.querySelector('#player-turn')
 const timerEl = document.querySelector('#timer')
 const startBtnEl = document.querySelector('#start-btn')
+const messageEl = document.querySelector('#message')
 
 const shipAEl = document.querySelector('#A')
 const shipBEl = document.querySelector('#B')
@@ -82,10 +85,35 @@ function init(){
 }
 
 function render(){
+    updateBoard()
+}
+
+function updateBoard(){
 
 }
 
-
+function handleShipClick (event){
+    if(event.target.id === 'A'){
+        selectedShip = ships.find((oneShip)=>{})
+    }
+    else if(event.target.id === 'B'){
+        
+    }
+    else if(event.target.id === 'C'){
+        
+    }
+    else if(event.target.id === 'D'){
+        
+    }
+    else if(event.target.id === 'E'){
+        
+    }
+}
 
 /*----------------------------- Event Listeners -----------------------------*/
+shipAEl.addEventListener('click', handleShipClick)
+shipBEl.addEventListener('click', handleShipClick)
+shipCEl.addEventListener('click', handleShipClick)
+shipDEl.addEventListener('click', handleShipClick)
+shipEEl.addEventListener('click', handleShipClick)
 
