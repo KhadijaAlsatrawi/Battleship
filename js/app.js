@@ -23,7 +23,7 @@ const player2Ships = [
     {name:'E', startPosition: [0,0], endPosition: [0,0]}
 ]
 
-const board1 = [
+const board1Grid  = [
     '','','','','','','','','','',
     '','','','','','','','','','',
     '','','','','','','','','','',
@@ -36,7 +36,7 @@ const board1 = [
     '','','','','','','','','',''
 ]
 
-const board2 = [
+const board2Grid = [
     '','','','','','','','','','',
     '','','','','','','','','','',
     '','','','','','','','','','',
@@ -56,9 +56,29 @@ let boardUpdated
 
 /*------------------------ Cached Element References ------------------------*/
 
+const board1El = document.querySelector('#board')
+const board2El = document.querySelector('#board2')
+const itemsBox = document.querySelector('.items-box')
+
+const grid1Els = document.querySelectorAll('.grid-box')
+const grid2Els = document.querySelectorAll('.grid-box2')
+
+const playerTurnEl = document.querySelector('#player-turn')
+const timerEl = document.querySelector('#timer')
+const startBtnEl = document.querySelector('#start-btn')
+
 
 /*-------------------------------- Functions --------------------------------*/
+function init(){
+    turn = 1
+    gameStatus = 'off'
+    boardUpdated = false
+    render()
+}
 
+function render(){
+    
+}
 
 /*----------------------------- Event Listeners -----------------------------*/
 
