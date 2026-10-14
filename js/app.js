@@ -1,5 +1,5 @@
 /*-------------------------------- Constants --------------------------------*/
- //a constant containing the type of ships
+//a constant containing the type of ships
 const ships = [
     { name: 'A', shipLength: 5 },
     { name: 'B', shipLength: 4 },
@@ -104,82 +104,82 @@ function render() {
 // update the boards
 function updateBoard() {
     //if its player 1
-    if(turn ===1){
-        for(let i = 0; i< player1Grid; i++){
+    if (turn === 1) {
+        for (let i = 0; i < player1Grid; i++) {
             //for each item in player 1 grid
-            if(player1Grid[i] === 'A'){
+            if (player1Grid[i] === 'A') {
                 grid2Els[i].computedStyleMap.backgroundColor = 'red'
             }
-            else if(player1Grid[i] === 'B'){
+            else if (player1Grid[i] === 'B') {
                 grid2Els[i].computedStyleMap.backgroundColor = 'orange'
             }
-            else if(player1Grid[i] === 'C'){
+            else if (player1Grid[i] === 'C') {
                 grid2Els[i].computedStyleMap.backgroundColor = 'yellow'
             }
-            else if(player1Grid[i] === 'D'){
+            else if (player1Grid[i] === 'D') {
                 grid2Els[i].computedStyleMap.backgroundColor = 'green'
             }
-            else if(player1Grid[i] === 'E'){
+            else if (player1Grid[i] === 'E') {
                 grid2Els[i].computedStyleMap.backgroundColor = 'blue'
             }
-            else if(player1Grid[i] === 'N'){
+            else if (player1Grid[i] === 'N') {
                 grid2Els[i].textContent = 'X'
                 grid2Els[i].computedStyleMap.color = 'black'
             }
-            else if(player1Grid[i] === 'Y'){
+            else if (player1Grid[i] === 'Y') {
                 grid2Els[i].textContent = 'X'
                 grid2Els[i].computedStyleMap.color = 'red'
             }
         }
 
         //for each item in player 2 grid
-        for(let i =0; i< player2Grid; i++){
-            if(player2Grid[i] === 'N'){
+        for (let i = 0; i < player2Grid; i++) {
+            if (player2Grid[i] === 'N') {
                 grid2Els[i].textContent = 'X'
                 grid2Els[i].computedStyleMap.color = 'black'
             }
-            else if(player2Grid[i] === 'Y'){
+            else if (player2Grid[i] === 'Y') {
                 grid2Els[i].textContent = 'X'
                 grid2Els[i].computedStyleMap.color = 'red'
             }
         }
     }
     // if its player 2
-    else{
-        for(let i = 0; i< player2Grid; i++){
+    else {
+        for (let i = 0; i < player2Grid; i++) {
             //for each item in player 2 grid
-            if(player2Grid[i] === 'A'){
+            if (player2Grid[i] === 'A') {
                 grid2Els[i].computedStyleMap.backgroundColor = 'red'
             }
-            else if(player2Grid[i] === 'B'){
+            else if (player2Grid[i] === 'B') {
                 grid2Els[i].computedStyleMap.backgroundColor = 'orange'
             }
-            else if(player2Grid[i] === 'C'){
+            else if (player2Grid[i] === 'C') {
                 grid2Els[i].computedStyleMap.backgroundColor = 'yellow'
             }
-            else if(player2Grid[i] === 'D'){
+            else if (player2Grid[i] === 'D') {
                 grid2Els[i].computedStyleMap.backgroundColor = 'green'
             }
-            else if(player2Grid[i] === 'E'){
+            else if (player2Grid[i] === 'E') {
                 grid2Els[i].computedStyleMap.backgroundColor = 'blue'
             }
-            else if(player2Grid[i] === 'N'){
+            else if (player2Grid[i] === 'N') {
                 grid2Els[i].textContent = 'X'
                 grid2Els[i].computedStyleMap.color = 'black'
             }
-            else if(player2Grid[i] === 'Y'){
+            else if (player2Grid[i] === 'Y') {
                 grid2Els[i].textContent = 'X'
                 grid2Els[i].computedStyleMap.color = 'red'
             }
         }
-        
+
         //for each item in player 1 grid
-        for(let i =0; i< player1Grid; i++){
-            if(player1Grid[i] === 'N'){
+        for (let i = 0; i < player1Grid; i++) {
+            if (player1Grid[i] === 'N') {
                 grid2Els[i].textContent = 'X'
                 grid2Els[i].computedStyleMap.color = 'black'
             }
-            else if(player1Grid[i] === 'Y'){
+            else if (player1Grid[i] === 'Y') {
                 grid2Els[i].textContent = 'X'
                 grid2Els[i].computedStyleMap.color = 'red'
             }
@@ -247,16 +247,15 @@ function placingShips(event) {
     //check if the ending position is empty
     else if (playerShip.endPosition[0] === '' && playerShip.endPosition[1] === '') {
         //checks if the length selected matches the ships length
-        if (Number (playerShip.startPosition[0]) - Number (saparetedID[0]) === (selectedShip.length - 1) ||
-            Number (playerShip.startPosition[0]) - Number (saparetedID[0]) === -(selectedShip.length - 1) ||
-            Number (playerShip.startPosition[1]) - Number (saparetedID[1]) === (selectedShip.length - 1) ||
-            Number (playerShip.startPosition[1]) - Number (saparetedID[1]) === -(selectedShip.length - 1)
+        if (Number(playerShip.startPosition[0]) - Number(saparetedID[0]) === (selectedShip.length - 1) ||
+            Number(playerShip.startPosition[0]) - Number(saparetedID[0]) === -(selectedShip.length - 1) ||
+            Number(playerShip.startPosition[1]) - Number(saparetedID[1]) === (selectedShip.length - 1) ||
+            Number(playerShip.startPosition[1]) - Number(saparetedID[1]) === -(selectedShip.length - 1)
         ) {
             //store the ending position
             playerShip.endPosition[0] = saparetedID[0]
             playerShip.endPosition[1] = saparetedID[1]
-            //cleares the selected ship
-            selectedShip = ''
+
             console.log(playerShip)
             console.log(playerShip.startPosition[0] - saparetedID[0])
             console.log(playerShip.startPosition[1] - saparetedID[1])
@@ -294,43 +293,43 @@ function UpdateplayerShips() {
 //updated the playerGrid arrays
 function updateGrid() {
     if (turn === 1) {
-        if(Number (playerShip.endPosition[0]) - Number(playerShip.startPosition[0]) === 0){
+        if (Number(playerShip.endPosition[0]) - Number(playerShip.startPosition[0]) === 0) {
             // the row value is not changed
-            if(Number (playerShip.endPosition[1]) - Number(playerShip.startPosition[1]) === (playerShip.length-1)){
+            if (Number(playerShip.endPosition[1]) - Number(playerShip.startPosition[1]) === (playerShip.length - 1)) {
                 //if the end column > start column
-                for(let i = 1; i <= Number (playerShip.endPosition[1]) - Number(playerShip.startPosition[1]); i++){
+                for (let i = 1; i <= Number(playerShip.endPosition[1]) - Number(playerShip.startPosition[1]); i++) {
                     player1Grid.fill(
                         playerShip.name,
-                        (startPosition[0]+(i*10)) + startPosition[1],
-                        (startPosition[0]+(i*10)) + (startPosition[1] +1)
+                        (startPosition[0] + (i * 10)) + startPosition[1],
+                        (startPosition[0] + (i * 10)) + (startPosition[1] + 1)
                     )
                 }
             }
-            else{
+            else {
                 //if the start column >  end column
-                for(let i = 1; i <= Number (playerShip.startPosition[1]) - Number(playerShip.endPosition[1]); i++){
+                for (let i = 1; i <= Number(playerShip.startPosition[1]) - Number(playerShip.endPosition[1]); i++) {
                     player1Grid.fill(
                         playerShip.name,
-                        (endPosition[0]-(i*10)) + startPosition[1],
-                        (endPosition[0]-(i*10)) + (startPosition[1] +1)
+                        (endPosition[0] - (i * 10)) + startPosition[1],
+                        (endPosition[0] - (i * 10)) + (startPosition[1] + 1)
                     )
                 }
             }
         }
-        else if(Number (playerShip.endPosition[0]) - Number(playerShip.startPosition[0]) === (playerShip.length-1)){
+        else if (Number(playerShip.endPosition[0]) - Number(playerShip.startPosition[0]) === (playerShip.length - 1)) {
             // the row value changed positively endRow > startRow && is the same as the length
             player1Grid.fill(
                 playerShip.name,
-                (startPosition[0]*10 + startPosition[1]),
-                (endPosition[0]*10 + endPosition[1] + 1)
+                (startPosition[0] * 10 + startPosition[1]),
+                (endPosition[0] * 10 + endPosition[1] + 1)
             )
         }
-        else{
+        else {
             // the row changed negatively startRow > endRow
             player1Grid.fill(
                 playerShip.name,
-                (endPosition[0]*10 + endPosition[1]),
-                (startPosition[0]*10 + startPosition[1] + 1)
+                (endPosition[0] * 10 + endPosition[1]),
+                (startPosition[0] * 10 + startPosition[1] + 1)
             )
         }
     }
@@ -343,6 +342,29 @@ function checkValidPosition() {
 
 }
 
+//removes the items from the item box
+function removeItemFromBox() {
+    if (selectedShip.name === 'A') {
+        shipAEl.classList.add('hidden')
+        selectedShip = ''
+    }
+    else if (selectedShip.name === 'B') {
+        shipBEl.classList.add('hidden')
+        selectedShip = ''
+    }
+    else if (selectedShip.name === 'C') {
+        shipCEl.classList.add('hidden')
+        selectedShip = ''
+    }
+    else if (selectedShip.name === 'D') {
+        shipDEl.classList.add('hidden')
+        selectedShip = ''
+    }
+    else if (selectedShip.name === 'E') {
+        shipEEl.classList.add('hidden')
+        selectedShip = ''
+    }
+}
 
 /*----------------------------- Event Listeners -----------------------------*/
 init()
