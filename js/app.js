@@ -52,6 +52,7 @@ const board2 = [
 /*---------------------------- Variables (state) ----------------------------*/
 let turn
 let gameStatus
+let boardUpdated
 
 /*------------------------ Cached Element References ------------------------*/
 

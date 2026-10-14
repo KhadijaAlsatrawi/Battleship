@@ -16,12 +16,6 @@ body{
     height: 100%;
 }
 
-#item-box{
-    border: 1px solid black;
-    width: 40%;
-    aspect-ratio: 1/1;
-}
-
 .game-board {
     display: flex;
     width: 40%;
@@ -37,22 +31,40 @@ body{
     aspect-ratio: 1/1;
 }
 
-#item-box{
+.item-box{
+    border: 1px solid black;
+    width: 40%;
+    aspect-ratio: 1/1;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 30px;
+    gap: 10%;
 }
 
 .item{
     border: 1px solid black;
-    display: flex;
+    height: 10%;
 }
 
-.box{
-    width: 40px;
-    aspect-ratio: 1/1;
+#A{
+    width: 50%;
+}
+
+#B{
+    width: 40%;
+}
+
+#C{
+    width: 30%;
+}
+
+#D{
+    width: 30%;
+}
+
+#E{
+    width: 20%;
 }
 
 .hidden{
