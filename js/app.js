@@ -23,7 +23,7 @@ const player2Ships = [
     {name:'E', startPosition: [0,0], endPosition: [0,0]}
 ]
 
-const board1Grid  = [
+const player1Grid  = [
     '','','','','','','','','','',
     '','','','','','','','','','',
     '','','','','','','','','','',
@@ -36,7 +36,7 @@ const board1Grid  = [
     '','','','','','','','','',''
 ]
 
-const board2Grid = [
+const player2Grid = [
     '','','','','','','','','','',
     '','','','','','','','','','',
     '','','','','','','','','','',
@@ -67,6 +67,11 @@ const playerTurnEl = document.querySelector('#player-turn')
 const timerEl = document.querySelector('#timer')
 const startBtnEl = document.querySelector('#start-btn')
 
+const shipAEl = document.querySelector('#A')
+const shipBEl = document.querySelector('#B')
+const shipCEl = document.querySelector('#C')
+const shipDEl = document.querySelector('#D')
+const shipEEl = document.querySelector('#E')
 
 /*-------------------------------- Functions --------------------------------*/
 function init(){
@@ -77,8 +82,10 @@ function init(){
 }
 
 function render(){
-    
+
 }
+
+
 
 /*----------------------------- Event Listeners -----------------------------*/
 

@@ -49,22 +49,27 @@ body{
 
 #A{
     width: 50%;
+    background-color: red;
 }
 
 #B{
     width: 40%;
+    background-color: orange;
 }
 
 #C{
     width: 30%;
+    background-color: yellow;
 }
 
 #D{
     width: 30%;
+    background-color: green;
 }
 
 #E{
     width: 20%;
+    background-color: blue;
 }
 
 .hidden{
