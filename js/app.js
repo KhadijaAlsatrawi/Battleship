@@ -1,52 +1,52 @@
 /*-------------------------------- Constants --------------------------------*/
 const ships = [
-    { name: 'A', length: 5 },
-    { name: 'B', length: 4 },
-    { name: 'C', length: 3 },
-    { name: 'D', length: 3 },
-    { name: 'E', length: 2 }
+    { name: 'A', shipLength: 5 },
+    { name: 'B', shipLength: 4 },
+    { name: 'C', shipLength: 3 },
+    { name: 'D', shipLength: 3 },
+    { name: 'E', shipLength: 2 }
 ]
 
 const player1Ships = [
-    { name: 'A', startPosition: ['', ''], endPosition: ['', ''] },
-    { name: 'B', startPosition: ['', ''], endPosition: ['', ''] },
-    { name: 'C', startPosition: ['', ''], endPosition: ['', ''] },
-    { name: 'D', startPosition: ['', ''], endPosition: ['', ''] },
-    { name: 'E', startPosition: ['', ''], endPosition: ['', ''] }
+    { name: 'A', startPosition: ['',''], endPosition: ['',''], shipLength:5 },
+    { name: 'B', startPosition: ['',''], endPosition: ['',''], shipLength:4 },
+    { name: 'C', startPosition: ['',''], endPosition: ['',''], shipLength:3 },
+    { name: 'D', startPosition: ['',''], endPosition: ['',''], shipLength:3 },
+    { name: 'E', startPosition: ['',''], endPosition: ['',''], shipLength:2 }
 ]
 
 const player2Ships = [
-    { name: 'A', startPosition: ['', ''], endPosition: ['', ''] },
-    { name: 'B', startPosition: ['', ''], endPosition: ['', ''] },
-    { name: 'C', startPosition: ['', ''], endPosition: ['', ''] },
-    { name: 'D', startPosition: ['', ''], endPosition: ['', ''] },
-    { name: 'E', startPosition: ['', ''], endPosition: ['', ''] }
+    { name: 'A', startPosition: ['',''], endPosition: ['',''], shipLength:5 },
+    { name: 'B', startPosition: ['',''], endPosition: ['',''], shipLength:4 },
+    { name: 'C', startPosition: ['',''], endPosition: ['',''], shipLength:3 },
+    { name: 'D', startPosition: ['',''], endPosition: ['',''], shipLength:3 },
+    { name: 'E', startPosition: ['',''], endPosition: ['',''], shipLength:2 }
 ]
 
 const player1Grid = [
-    '', '', '', '', '', '', '', '', '', '',
-    '', '', '', '', '', '', '', '', '', '',
-    '', '', '', '', '', '', '', '', '', '',
-    '', '', '', '', '', '', '', '', '', '',
-    '', '', '', '', '', '', '', '', '', '',
-    '', '', '', '', '', '', '', '', '', '',
-    '', '', '', '', '', '', '', '', '', '',
-    '', '', '', '', '', '', '', '', '', '',
-    '', '', '', '', '', '', '', '', '', '',
-    '', '', '', '', '', '', '', '', '', ''
+    '','', '','', '','', '','', '','',
+    '','', '','', '','', '','', '','',
+    '','', '','', '','', '','', '','',
+    '','', '','', '','', '','', '','',
+    '','', '','', '','', '','', '','',
+    '','', '','', '','', '','', '','',
+    '','', '','', '','', '','', '','',
+    '','', '','', '','', '','', '','',
+    '','', '','', '','', '','', '','',
+    '','', '','', '','', '','', '',''
 ]
 
 const player2Grid = [
-    '', '', '', '', '', '', '', '', '', '',
-    '', '', '', '', '', '', '', '', '', '',
-    '', '', '', '', '', '', '', '', '', '',
-    '', '', '', '', '', '', '', '', '', '',
-    '', '', '', '', '', '', '', '', '', '',
-    '', '', '', '', '', '', '', '', '', '',
-    '', '', '', '', '', '', '', '', '', '',
-    '', '', '', '', '', '', '', '', '', '',
-    '', '', '', '', '', '', '', '', '', '',
-    '', '', '', '', '', '', '', '', '', ''
+    '','', '','', '','', '','', '','',
+    '','', '','', '','', '','', '','',
+    '','', '','', '','', '','', '','',
+    '','', '','', '','', '','', '','',
+    '','', '','', '','', '','', '','',
+    '','', '','', '','', '','', '','',
+    '','', '','', '','', '','', '','',
+    '','', '','', '','', '','', '','',
+    '','', '','', '','', '','', '','',
+    '','', '','', '','', '','', '',''
 ]
 
 /*---------------------------- Variables (state) ----------------------------*/
@@ -55,6 +55,7 @@ let gameStatus
 let boardUpdated
 let selectedShip
 let message
+let playerShip
 
 /*------------------------ Cached Element References ------------------------*/
 
@@ -95,20 +96,26 @@ function updateBoard() {
 }
 
 function handleShipClick(event) {
-    if (event.target.id === 'A') {
-        selectedShip = ships.find(oneShip => oneShip.name === 'A')
+    if (selectedShip === '') {
+        if (event.target.id === 'A') {
+            selectedShip = ships.find(oneShip => oneShip.name === 'A')
+        }
+        else if (event.target.id === 'B') {
+            selectedShip = ships.find(oneShip => oneShip.name === 'B')
+        }
+        else if (event.target.id === 'C') {
+            selectedShip = ships.find(oneShip => oneShip.name === 'C')
+        }
+        else if (event.target.id === 'D') {
+            selectedShip = ships.find(oneShip => oneShip.name === 'D')
+        }
+        else if (event.target.id === 'E') {
+            selectedShip = ships.find(oneShip => oneShip.name === 'E')
+        }
+        message = `you selecter ${selectedShip.name} place the ship`
     }
-    else if (event.target.id === 'B') {
-        selectedShip = ships.find(oneShip => oneShip.name === 'B')
-    }
-    else if (event.target.id === 'C') {
-        selectedShip = ships.find(oneShip => oneShip.name === 'C')
-    }
-    else if (event.target.id === 'D') {
-        selectedShip = ships.find(oneShip => oneShip.name === 'D')
-    }
-    else if (event.target.id === 'E') {
-        selectedShip = ships.find(oneShip => oneShip.name === 'E')
+    else {
+        message = `you selecter ${selectedShip.name} place it first`
     }
 }
 
@@ -131,62 +138,67 @@ function handleGrid2Click(event) {
 }
 
 function placingShips(event) {
-    if (turn === 1) {
-        const player1Ship = player1Ships.find(oneShip => oneShip.name === selectedShip.name)
+    playerShip = retreveShip()
         const saparetedID = event.target.id.split('-')
-        if (player1Ship.startPosition[0] === '' && player1Ship.startPosition[1] === '') {
-            player1Ship.startPosition[0] = saparetedID[0]
-            player1Ship.startPosition[1] = saparetedID[1]
+        if (playerShip.startPosition[0] === '' && playerShip.startPosition[1] === '') {
+            playerShip.startPosition[0] = saparetedID[0]
+            playerShip.startPosition[1] = saparetedID[1]
             message = 'select a ending position'
         }
-        else if (player1Ship.endPosition[0] === '' && player1Ship.endPosition[1] === '') {
-            if(player1Ship.startPosition[0] -  saparetedID[0] === (selectedShip.length-1) || 
-                player1Ship.startPosition[0] -  saparetedID[0] === -(selectedShip.length-1) ||
-                player1Ship.startPosition[1] -  saparetedID[1] === (selectedShip.length-1)||
-                player1Ship.startPosition[1] -  saparetedID[1] === -(selectedShip.length-1)
-            ){
-                player1Ship.endPosition[0] = saparetedID[0]
-                player1Ship.endPosition[1] = saparetedID[1]
+        else if (playerShip.endPosition[0] === '' && playerShip.endPosition[1] === '') {
+            if (playerShip.startPosition[0] - saparetedID[0] === (selectedShip.length - 1) ||
+                playerShip.startPosition[0] - saparetedID[0] === -(selectedShip.length - 1) ||
+                playerShip.startPosition[1] - saparetedID[1] === (selectedShip.length - 1) ||
+                playerShip.startPosition[1] - saparetedID[1] === -(selectedShip.length - 1)
+            ) {
+                playerShip.endPosition[0] = saparetedID[0]
+                playerShip.endPosition[1] = saparetedID[1]
                 selectedShip = ''
-                console.log(player1Ship)
-                console.log(player1Ship.startPosition[0] -  saparetedID[0])
-                console.log(player1Ship.startPosition[1] -  saparetedID[1])
+                console.log(playerShip)
+                console.log(playerShip.startPosition[0] - saparetedID[0])
+                console.log(playerShip.startPosition[1] - saparetedID[1])
             }
-            else{
+            else {
                 message = `the ships length is ${selectedShip.length}, Select an appropriate end position`
                 console.log(message)
             }
-        }
     }
-
-    if (turn === 2) {
-        const player2Ship = player2Ships.find(oneShip => oneShip.name === selectedShip.name)
-        const saparetedID = event.target.id.split('-')
-        if (player2Ship.startPosition[0] === '' && player2Ship.startPosition[1] === '') {
-            player2Ship.startPosition[0] = saparetedID[0]
-            player2Ship.startPosition[1] = saparetedID[1]
-        }
-        else if (player2Ship.endPosition[0] === '' && player2Ship.endPosition[1] === '') {
-            if(player2Ship.startPosition[0] -  saparetedID[0] === selectedShip.length || 
-                player2Ship.startPosition[0] -  saparetedID[0] === -selectedShip.length ||
-                player2Ship.startPosition[1] -  saparetedID[1] === selectedShip.length ||
-                player2Ship.startPosition[1] -  saparetedID[1] === -selectedShip.length
-            ){
-                player2Ship.endPosition[0] = saparetedID[0]
-                player2Ship.endPosition[1] = saparetedID[1]
-                selectedShip = ''
-            }
-            else{
-                message = `the ships length is ${selectedShip.length}, Select an appropriate end position`
-            }
-        }
-    }
-    UpdatePlayerGrid()
 }
 
-function UpdatePlayerGridAndShips(){
-
+function retreveShip(){
+    if(turn === 1){
+        return player1Ships.find(oneShip => oneShip.name === selectedShip.name)
+    }
+    else{
+        return player2Ships.find(oneShip => oneShip.name === selectedShip.name)
+    }
 }
+
+function checkValidPosition(){
+    
+}
+
+function UpdateplayerShips() {
+    if (turn === 1){
+        let index = player1Ships.findIndex(oneShip => oneShip.name === playerOneShip.name)
+        player1Ships.splice(index, 1, playerShip)
+    }
+    else {
+        let index = player2Ships.findIndex(oneShip => oneShip.name === playerOneShip.name)
+        player2Ships.splice(index, 1, playerShip)
+    }
+}
+
+function updateGrid(){
+    if (turn === 1){
+        player1Grid.slice(Number (playerShip.startPosition.join('')), playerShip.shipLength, playerShip.name)
+    }
+    else{
+        player2Grid.slice(Number (playerShip.startPosition.join('')), playerShip.shipLength, playerShip.name)
+    }
+}
+
+
 
 /*----------------------------- Event Listeners -----------------------------*/
 init()
