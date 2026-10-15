@@ -76,7 +76,7 @@ const grid2Els = document.querySelectorAll('.grid-box2')
 //caching the elements of the middle container
 const playerTurnEl = document.querySelector('#player-turn')
 const timerEl = document.querySelector('#timer')
-const startBtnEl = document.querySelector('#start-btn')
+const gameBtnEl = document.querySelector('#game-btn')
 const messageEl = document.querySelector('#message')
 
 //caching the ships 
@@ -90,7 +90,7 @@ const shipEEl = document.querySelector('#E')
 //the initialization function 
 function init() {
     turn = 1
-    gameStatus = 'placing'
+    gameStatus = 'off'
     boardUpdated = false
     selectedShip = ''
     message = ''
@@ -146,6 +146,23 @@ function handleGrid2Click(event) {
         }
     }
     render()
+}
+
+//function to handle clicking on the game button
+function handleButtonClick() {
+    if (gameStatus === 'off') {
+        gameStatus = 'placing'
+    }
+    else if (gameStatus === 'placing') {
+        if (checkAllItemsPlaced()) {
+            if (turn === 1) {
+                switchUser()
+            }
+            else {
+                gameStatus = 'playing'
+            }
+        }
+    }
 }
 
 // checks the starting position, and store it if empty, check the ending position, conferm the length, store the ending position
@@ -221,7 +238,13 @@ function removeItemFromBox() {
     selectedShip = ''
 }
 
-
+//checks if all ships are placed 
+function checkAllItemsPlaced(){
+    //store the ships array based on the player turn
+    const ships = turn === 1 ? player1Ships:player2Ships
+    //return true if no end position is empty
+    return ships.every(oneShip => {oneShip.endPosition !== ''})
+}
 
 //switch the user
 function switchUser() {
@@ -274,7 +297,7 @@ function updateGrid() {
             player2Grid.splice(0, 100, ...grid)
         }
     }
-    else if(gameStatus === 'playing'){
+    else if (gameStatus === 'playing') {
         //gameplay logic
     }
 }
@@ -340,4 +363,4 @@ for (const sqr of grid2Els) {
     sqr.addEventListener('click', handleGrid2Click)
 }
 
-
+gameBtnEl.addEventListener('click', handleButtonClick)
