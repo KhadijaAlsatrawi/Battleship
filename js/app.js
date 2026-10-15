@@ -76,6 +76,7 @@ const grid2Els = document.querySelectorAll('.grid-box2')
 //caching the elements of the middle container
 const playerTurnEl = document.querySelector('#player-turn')
 const timerEl = document.querySelector('#timer')
+const shipDirectionBtnEl = document.querySelector('#ship-direction')
 const gameBtnEl = document.querySelector('#game-btn')
 const messageEl = document.querySelector('#message')
 
@@ -148,20 +149,37 @@ function handleGrid2Click(event) {
     render()
 }
 
+//changing the direction on the ship placement
+function handleShipDirectionClick(event) {
+    if (event.target.textContent === 'Horizontal') {
+        shipDirection = 'V'
+        shipDirectionBtnEl.textContent = 'Vertical'
+    }
+    else {
+        shipDirection = 'H'
+        shipDirectionBtnEl.textContent = 'Horizontal'
+    }
+}
+
 //function to handle clicking on the game button
-function handleButtonClick() {
+function handleStatusBtnClick() {
     if (gameStatus === 'off') {
         gameStatus = 'placing'
+        gameBtnEl.textContent = 'Next'
+        shipDirectionBtnEl.classList.remove('hidden')
     }
     else if (gameStatus === 'placing') {
         if (checkAllItemsPlaced()) {
             if (turn === 1) {
+                gameBtnEl.textContent = 'Play'
             }
             else {
                 gameStatus = 'playing'
+                shipDirectionBtnEl.classList.add('hidden')
             }
-            switchUser()
+            switchTurn()
             setGamePlayBoards()
+            updateBoard()
         }
     }
 }
@@ -172,28 +190,29 @@ function placingShips(event) {
 
     //split the ID to Row and column values
     const saparetedID = event.target.id.split('-')
-
     //check if the starting position is empty
     if (playerShip.startPosition[0] === '' && playerShip.startPosition[1] === '') {
+        //store the starting position
+        playerShip.startPosition[0] = saparetedID[0]
+        playerShip.startPosition[1] = saparetedID[1]
+
+        //if the direction is horizontal then the row does not change only the columns
+        //if the direction is not horizontal then the column does not change only the rows
+        endRow = shipDirection === 'H' ? (saparetedID[0]) : String(Number(saparetedID[0]) + Number(playerShip.shipLength)-1)
+        endCol = shipDirection === 'H' ? String(Number(saparetedID[1]) + Number(playerShip.shipLength)-1) : (playerShip.startPosition[1])
+
+        //store the ending position
+        playerShip.endPosition[0] = endRow
+        playerShip.endPosition[1] = endCol
+
         if (checkValidPosition()) {
-            //store the starting position
-            playerShip.startPosition[0] = saparetedID[0]
-            playerShip.startPosition[1] = saparetedID[1]
-
-            //if the direction is horizontal then the row does not change only the columns
-            //if the direction is not horizontal then the column does not change only the rows
-            endRow = shipDirection === 'H' ? (saparetedID[0]) : (Number(saparetedID[0]) + Number(playerShip.shipLength))
-            endCol = shipDirection === 'H' ? (Number(saparetedID[1]) + Number(playerShip.shipLength)) : (playerShip.startPosition[1])
-
-            //store the ending position
-            playerShip.endPosition[0] = endRow
-            playerShip.endPosition[1] = endCol
-
             removeItemFromBox()
             updateGrid()
+            UpdateplayerShips()
         }
         else {
-            message = `cannot place the ship here`
+            messageEl.textContent = `cannot place the ship here`
+            selectedShip = ''
         }
     }
 }
@@ -213,10 +232,39 @@ function checkValidPosition() {
     const startingPoition = Number(playerShip.startPosition[0]) * 10 + Number(playerShip.startPosition[1])
     const endingPosition = Number(playerShip.endPosition[0]) * 10 + Number(playerShip.endPosition[1])
 
-    //store a slice of the grid where the ship is placed
-    const selectedPosition = grid.slice(startingPoition, (endingPosition + 1))
-    //if all boxes are ermpty then return true (ship can be placed here)
-    return selectedPosition.every(onePosition => onePosition === '')
+    if (shipDirection === 'H') {
+        //store a slice of the grid where the ship is placed
+        const selectedPosition = grid.slice(startingPoition, (endingPosition + 1))
+
+        //if all boxes are ermpty then return true (ship can be placed here)
+        const emptySpace = selectedPosition.every(onePosition => onePosition === '')
+
+        //end calumn cannot be < then start column, the rows should be the same and emptySpace should be true
+        return playerShip.endPosition[1] > playerShip.startPosition[1] && playerShip.startPosition[0] === playerShip.endPosition[0] && emptySpace
+    }
+    else {
+        //create the array to check for empty places
+        const selectedPosition = []
+
+        //save the startingPoition as a variable to change it 
+        let loopIndex = startingPoition
+
+        //for the length of the ship 
+        for (let i = 0; i < playerShip.shipLength; i++) {
+
+            //push the grid element using the index
+            selectedPosition.push(grid[loopIndex])
+
+            //add 10 to the endex to rech the next row
+            loopIndex += 10
+        }
+
+        //if all boxes are ermpty then return true (ship can be placed here)
+        const emptySpace = selectedPosition.every(onePosition => onePosition === '')
+
+        //end row cannot be < then start row, the columns should be the same and emptySpace should be true
+        return playerShip.endPosition[0] > playerShip.startPosition[0] && playerShip.startPosition[1] === playerShip.endPosition[1] && emptySpace
+    }
 }
 
 //removes the items from the item box
@@ -240,25 +288,26 @@ function removeItemFromBox() {
 }
 
 //checks if all ships are placed 
-function checkAllItemsPlaced(){
+function checkAllItemsPlaced() {
     //store the ships array based on the player turn
-    const ships = turn === 1 ? player1Ships:player2Ships
+    const ships = turn === 1 ? player1Ships : player2Ships
     //return true if no end position is empty
-    return ships.every(oneShip => {oneShip.endPosition !== ''})
+    return ships.every(oneShip => { oneShip.endPosition[0] !== '' })
 }
 
 //switch the user
-function switchUser() {
+function switchTurn() {
     // if the board is updated then witch the user
     if (updateBoard) {
         // if turn is 1 then change it to 2 else turn it to 1
         turn = turn === 1 ? 2 : 1
+        playerTurnEl.textContent = `It is Player ${turn}} turn`
     }
     render()
 }
 
-function setGamePlayBoards(){
-    if(gameStatus === 'playing'){
+function setGamePlayBoards() {
+    if (gameStatus === 'playing') {
         board1El.classList.remove('hidden')
         itemsBoxEL.classList.add('hidden')
     }
@@ -287,13 +336,14 @@ function updateGrid() {
 
         if (rowDiff === 0 && colDiff !== 0) {
             //horizontal change
-            grid.fill(playerShip.name, (startPosition), (endPosition + 1))
+            grid.fill(playerShip.name, startPosition, (endPosition + 1))
         }
         else if (colDiff === 0 && rowDiff !== 0) {
+            let loopIndex = startPosition
             //vertical change
-            for (let i = 0; i < colDiff; i++) {
-                grid.fill(playerShip.name, (startPosition), (startPosition + 1))
-                startPosition += 10
+            for (let i = 0; i <= rowDiff; i++) {
+                grid.fill(playerShip.name, loopIndex, (loopIndex + 1))
+                loopIndex += 10
             }
         }
 
@@ -371,4 +421,5 @@ for (const sqr of grid2Els) {
     sqr.addEventListener('click', handleGrid2Click)
 }
 
-gameBtnEl.addEventListener('click', handleButtonClick)
+gameBtnEl.addEventListener('click', handleStatusBtnClick)
+shipDirectionBtnEl.addEventListener('click', handleShipDirectionClick)
