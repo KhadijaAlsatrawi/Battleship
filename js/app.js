@@ -177,9 +177,13 @@ function handleStatusBtnClick() {
                 gameStatus = 'playing'
                 shipDirectionBtnEl.classList.add('hidden')
             }
+            boardUpdated = true
             switchTurn()
             setGamePlayBoards()
             updateBoard()
+        }
+        else {
+            boardUpdated = false
         }
     }
 }
@@ -197,8 +201,8 @@ function placingShips(event) {
 
         //if the direction is horizontal then the row does not change only the columns
         //if the direction is not horizontal then the column does not change only the rows
-        endRow = shipDirection === 'H' ? (saparetedID[0]) : String(Number(saparetedID[0]) + Number(playerShip.shipLength)-1)
-        endCol = shipDirection === 'H' ? String(Number(saparetedID[1]) + Number(playerShip.shipLength)-1) : (playerShip.startPosition[1])
+        endRow = shipDirection === 'H' ? (saparetedID[0]) : String(Number(saparetedID[0]) + Number(playerShip.shipLength) - 1)
+        endCol = shipDirection === 'H' ? String(Number(saparetedID[1]) + Number(playerShip.shipLength) - 1) : (playerShip.startPosition[1])
 
         //store the ending position
         playerShip.endPosition[0] = endRow
@@ -211,12 +215,11 @@ function placingShips(event) {
         }
         else {
             messageEl.textContent = `cannot place the ship here`
-            
+
         }
         selectedShip = ''
         playerShip = ''
         messageEl.textContent = `select a Ship`
-        console.log(player1Grid)
     }
 }
 
@@ -294,8 +297,22 @@ function removeItemFromBox() {
 function checkAllItemsPlaced() {
     //store the ships array based on the player turn
     const ships = turn === 1 ? player1Ships : player2Ships
+    let checkitems = []
     //return true if no end position is empty
-    return ships.every(oneShip => { oneShip.endPosition[0] !== '' })
+    for (const oneShip of ships) {
+        if (oneShip.endPosition[0] === '') {
+            checkitems.push(false)
+        }
+        else {
+            checkitems.push(true)
+        }
+    }
+    if (checkitems.includes(false)) {
+        return false
+    }
+    else {
+        return true
+    }
 }
 
 //switch the user
@@ -304,7 +321,7 @@ function switchTurn() {
     if (updateBoard) {
         // if turn is 1 then change it to 2 else turn it to 1
         turn = turn === 1 ? 2 : 1
-        playerTurnEl.textContent = `It is Player ${turn}} turn`
+        playerTurnEl.textContent = `It is Player ${turn} turn`
     }
     render()
 }
@@ -384,6 +401,11 @@ function updateBoard() {
             grid2Els[i].textContent = 'X'
             grid2Els[i].style.color = 'red'
         }
+        else {
+            grid2Els[i].textContent = ''
+            grid2Els[i].style.color = 'none'
+            grid2Els[i].style.backgroundColor = 'none'
+        }
     }
 
     //for each item in the opponent grid
@@ -395,6 +417,11 @@ function updateBoard() {
         else if (opponentGrid[i] === 'Y') {
             grid1Els[i].textContent = 'X'
             grid1Els[i].style.color = 'red'
+        }
+        else {
+            grid1Els[i].textContent = ''
+            grid1Els[i].style.color = 'none'
+            grid1Els[i].style.backgroundColor = 'none'
         }
     }
 }
