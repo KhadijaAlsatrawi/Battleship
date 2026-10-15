@@ -102,6 +102,7 @@ function init() {
 //a function to render/update the HTML
 function render() {
     updateBoard()
+    updateMessage()
 }
 
 //saves the selected ship in the selected ship variable
@@ -124,9 +125,7 @@ function handleShipClick(event) {
         }
         message = `you selecter ${selectedShip.name} place the ship`
     }
-    else {
-        message = `you selecter ${selectedShip.name} place it first`
-    }
+    render()
 }
 
 //clicking on the oponent grid
@@ -167,6 +166,7 @@ function handleStatusBtnClick() {
         gameStatus = 'placing'
         gameBtnEl.textContent = 'Next'
         shipDirectionBtnEl.classList.remove('hidden')
+        message = `select a Ship`
     }
     else if (gameStatus === 'placing') {
         if (checkAllItemsPlaced()) {
@@ -176,15 +176,21 @@ function handleStatusBtnClick() {
             else {
                 gameStatus = 'playing'
                 shipDirectionBtnEl.classList.add('hidden')
+                message = `select a position on the opponent grid to hit`
+                for (let sqr of grid2Els) {
+                    sqr.removeEventListener('click', handleGrid2Click)
+                }
+                gameBtnEl.classList.add('hidden')
             }
             boardUpdated = true
-            switchTurn()
-            setGamePlayBoards()
         }
         else {
             boardUpdated = false
         }
     }
+    switchTurn()
+    setGamePlayBoards()
+    render()
 }
 
 // checks the starting position, and store it if empty, check the ending position, conferm the length, store the ending position
@@ -213,13 +219,13 @@ function placingShips(event) {
             UpdateplayerShips()
         }
         else {
-            messageEl.textContent = `cannot place the ship here`
+            message = `cannot place the ship here select a Ship`
 
         }
         selectedShip = ''
         playerShip = ''
-        messageEl.textContent = `select a Ship`
     }
+    render()
 }
 
 //retrevie the object of the player ship form the player ships array
@@ -317,12 +323,10 @@ function checkAllItemsPlaced() {
 //switch the user
 function switchTurn() {
     // if the board is updated then witch the user
-    if (updateBoard) {
+    if (boardUpdated) {
         // if turn is 1 then change it to 2 else turn it to 1
         turn = turn === 1 ? 2 : 1
         playerTurnEl.textContent = `It is Player ${turn} turn`
-
-        render()
     }
 }
 
@@ -374,9 +378,6 @@ function updateGrid() {
             }
         }
     }
-    else if (gameStatus === 'playing') {
-        //gameplay logic
-    }
 }
 
 // update the boards
@@ -384,10 +385,6 @@ function updateBoard() {
     //check the turn and place the correct grid in the grid const
     const grid = turn === 1 ? player1Grid : player2Grid
     const opponentGrid = turn === 1 ? player2Grid : player1Grid
-
-    console.log(grid)
-    console.log(opponentGrid)
-
 
     for (let i = 0; i < grid.length; i++) {
         if (grid[i] === 'A') {
@@ -436,6 +433,10 @@ function updateBoard() {
             grid1Els[i].style.backgroundColor = 'none'
         }
     }
+}
+
+function updateMessage() {
+    messageEl.textContent = message
 }
 
 /*----------------------------- Event Listeners -----------------------------*/
