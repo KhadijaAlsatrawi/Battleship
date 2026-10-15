@@ -67,7 +67,7 @@ let shipDirection //horizontal (H) or vertical (V)
 //caching the main containors
 const board1El = document.querySelector('#board')
 const board2El = document.querySelector('#board2')
-const itemsBox = document.querySelector('.items-box')
+const itemsBoxEL = document.querySelector('.items-box')
 
 //caching the grids
 const grid1Els = document.querySelectorAll('.grid-box')
@@ -156,11 +156,12 @@ function handleButtonClick() {
     else if (gameStatus === 'placing') {
         if (checkAllItemsPlaced()) {
             if (turn === 1) {
-                switchUser()
             }
             else {
                 gameStatus = 'playing'
             }
+            switchUser()
+            setGamePlayBoards()
         }
     }
 }
@@ -254,6 +255,13 @@ function switchUser() {
         turn = turn === 1 ? 2 : 1
     }
     render()
+}
+
+function setGamePlayBoards(){
+    if(gameStatus === 'playing'){
+        board1El.classList.remove('hidden')
+        itemsBoxEL.classList.add('hidden')
+    }
 }
 
 //deplace the ship in player ships array with the playerShip variable
