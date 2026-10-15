@@ -103,6 +103,9 @@ function init() {
 function render() {
     updateBoard()
     updateMessage()
+    console.log(`in the render function:`, playerShip)
+    console.log(`in the render function: ${player1Ships[0].endPosition[0]}`)
+
 }
 
 //saves the selected ship in the selected ship variable
@@ -129,12 +132,26 @@ function handleShipClick(event) {
 }
 
 //clicking on the oponent grid
-function handleGrid1Click() {
+function handleGrid1Click(event) {
+    const saparetedID = event.target.id.split('-')
+    const selectedPosition = saparetedID.join('')
 
+    const opponentShip = checkForOpponentShip(selectedPosition)
+    updateOpponentGrid(selectedPosition, opponentShip)
+    checkForWinner()
+    render()
+    const swichPlayer = setInterval(() => {
+        switchTurn()
+        render()
+        clearInterval(swichPlayer)
+    }, 5000)
 }
 
 //clicking on your own grid
 function handleGrid2Click(event) {
+
+    console.log(`in the handle click function: ${selectedShip.name}`)
+
     //if the game in placing status
     if (gameStatus === 'placing') {
         if (selectedShip !== '') {
@@ -195,7 +212,9 @@ function handleStatusBtnClick() {
 
 // checks the starting position, and store it if empty, check the ending position, conferm the length, store the ending position
 function placingShips(event) {
+    console.log(`in the placing ship function: ${selectedShip.name}`)
     playerShip = retrieveShip()
+    console.log(`in the placing ship function:`, playerShip)
     //split the ID to Row and column values
     const saparetedID = event.target.id.split('-')
     //check if the starting position is empty
@@ -215,24 +234,39 @@ function placingShips(event) {
 
         if (checkValidPosition()) {
             removeItemFromBox()
-            updateGrid()
+            updatePlayerGrid()
             UpdateplayerShips()
         }
         else {
             message = `cannot place the ship here select a Ship`
+            const ships = turn === 1 ? player1Ships : player2Ships
 
+            playerShip.startPosition[0] = ''
+            playerShip.startPosition[1] = ''
+
+            playerShip.endPosition[0] = ''
+            playerShip.endPosition[1] = ''
+
+            const index = ships.indexOf((oneShip => oneShip.name === playerShip.name))
+            ships.splice(index, 1, playerShip)
         }
-        selectedShip = ''
-        playerShip = ''
     }
-    render()
+    selectedShip = ''
+    playerShip = ''
 }
 
 //retrevie the object of the player ship form the player ships array
 function retrieveShip() {
     //check the turn and place the correct ships in the ships const
-    const ships = turn === 1 ? player1Ships : player2Ships
-    return ships.find(oneShip => oneShip.name === selectedShip.name)
+    //const ships = turn === 1 ? player1Ships : player2Ships
+    if (turn === 1) {
+        console.log(`retrieve ship function: ${player1Ships[0].endPosition[0]}`)
+        return player1Ships.find(oneShip => oneShip.name === selectedShip.name)
+    }
+    else {
+        return player2Ships.find(oneShip => oneShip.name === selectedShip.name)
+    }
+
 }
 
 function checkValidPosition() {
@@ -320,6 +354,20 @@ function checkAllItemsPlaced() {
     }
 }
 
+function checkForOpponentShip(selectedPosition) {
+    const grid = turn === 1 ? player2Grid : player1Grid
+    if (grid[selectedPosition] !== '') {
+        return 'Y'
+    }
+    else {
+        return 'N'
+    }
+}
+
+function checkForWinner() {
+
+}
+
 //switch the user
 function switchTurn() {
     // if the board is updated then witch the user
@@ -350,11 +398,15 @@ function UpdateplayerShips() {
     const ships = turn === 1 ? player1Ships : player2Ships
     let index = ships.findIndex(oneShip => oneShip.name === playerShip.name)
     ships.splice(index, 1, playerShip)
+}
 
+function updateOpponentGrid(selectedPosition, updateOpponentGrid) {
+    const grid = turn === 1 ? player2Grid : player1Grid
+    grid.fill(updateOpponentGrid, selectedPosition, Number(selectedPosition) + 1)
 }
 
 //updated the playerGrid arrays
-function updateGrid() {
+function updatePlayerGrid() {
     if (gameStatus === 'placing') {
         //check the turn and place the correct grid in the grid const
         const grid = turn === 1 ? player1Grid : player2Grid
@@ -405,10 +457,12 @@ function updateBoard() {
         else if (grid[i] === 'N') {
             grid2Els[i].textContent = 'X'
             grid2Els[i].style.color = 'black'
+            grid2Els[i].style.backgroundColor = 'white'
         }
         else if (grid[i] === 'Y') {
             grid2Els[i].textContent = 'X'
             grid2Els[i].style.color = 'red'
+            grid2Els[i].style.backgroundColor = 'white'
         }
         else {
             grid2Els[i].textContent = ''
