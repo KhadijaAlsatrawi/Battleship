@@ -329,7 +329,7 @@ function UpdateplayerShips() {
 function updateGrid() {
     if (gameStatus === 'placing') {
         //check the turn and place the correct grid in the grid const
-        const grid = turn === 1 ? [...player1Grid] : [...player2Grid]
+        const grid = turn === 1 ? player1Grid : player2Grid
 
         const startPosition = (Number(playerShip.startPosition[0]) * 10) + Number(playerShip.startPosition[1])
         const endPosition = (Number(playerShip.endPosition[0]) * 10) + Number(playerShip.endPosition[1])
@@ -348,14 +348,6 @@ function updateGrid() {
                 grid.fill(playerShip.name, loopIndex, (loopIndex + 1))
                 loopIndex += 10
             }
-        }
-
-        //checks the turn and update the actual players grid
-        if (turn === 1) {
-            player1Grid.splice(0, 100, ...grid)
-        }
-        else {
-            // player2Grid.splice(0, 100, ...grid)
         }
     }
     else if (gameStatus === 'playing') {
