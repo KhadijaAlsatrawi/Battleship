@@ -180,7 +180,6 @@ function handleStatusBtnClick() {
             boardUpdated = true
             switchTurn()
             setGamePlayBoards()
-            updateBoard()
         }
         else {
             boardUpdated = false
@@ -322,12 +321,20 @@ function switchTurn() {
         // if turn is 1 then change it to 2 else turn it to 1
         turn = turn === 1 ? 2 : 1
         playerTurnEl.textContent = `It is Player ${turn} turn`
+
+        render()
     }
-    render()
 }
 
 function setGamePlayBoards() {
-    if (gameStatus === 'playing') {
+    if (gameStatus === 'placing' && boardUpdated) {
+        shipAEl.classList.remove('hidden')
+        shipBEl.classList.remove('hidden')
+        shipCEl.classList.remove('hidden')
+        shipDEl.classList.remove('hidden')
+        shipEEl.classList.remove('hidden')
+    }
+    else if (gameStatus === 'playing') {
         board1El.classList.remove('hidden')
         itemsBoxEL.classList.add('hidden')
     }
@@ -377,6 +384,11 @@ function updateBoard() {
     //check the turn and place the correct grid in the grid const
     const grid = turn === 1 ? player1Grid : player2Grid
     const opponentGrid = turn === 1 ? player2Grid : player1Grid
+
+    console.log(grid)
+    console.log(opponentGrid)
+
+
     for (let i = 0; i < grid.length; i++) {
         if (grid[i] === 'A') {
             grid2Els[i].style.backgroundColor = 'red'
@@ -403,8 +415,8 @@ function updateBoard() {
         }
         else {
             grid2Els[i].textContent = ''
-            grid2Els[i].style.color = 'none'
-            grid2Els[i].style.backgroundColor = 'none'
+            grid2Els[i].style.color = 'white'
+            grid2Els[i].style.backgroundColor = 'white'
         }
     }
 
