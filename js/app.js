@@ -187,7 +187,6 @@ function handleStatusBtnClick() {
 // checks the starting position, and store it if empty, check the ending position, conferm the length, store the ending position
 function placingShips(event) {
     playerShip = retrieveShip()
-
     //split the ID to Row and column values
     const saparetedID = event.target.id.split('-')
     //check if the starting position is empty
@@ -212,8 +211,12 @@ function placingShips(event) {
         }
         else {
             messageEl.textContent = `cannot place the ship here`
-            selectedShip = ''
+            
         }
+        selectedShip = ''
+        playerShip = ''
+        messageEl.textContent = `select a Ship`
+        console.log(player1Grid)
     }
 }
 
@@ -316,8 +319,8 @@ function setGamePlayBoards() {
 //deplace the ship in player ships array with the playerShip variable
 function UpdateplayerShips() {
     //check the turn and place the correct ships in the ships const
-    const ships = turn === 1 ? player1Grid : player2Grid
-    let index = player1Ships.findIndex(oneShip => oneShip.name === playerShip.name)
+    const ships = turn === 1 ? player1Ships : player2Ships
+    let index = ships.findIndex(oneShip => oneShip.name === playerShip.name)
     ships.splice(index, 1, playerShip)
 
 }
@@ -326,7 +329,7 @@ function UpdateplayerShips() {
 function updateGrid() {
     if (gameStatus === 'placing') {
         //check the turn and place the correct grid in the grid const
-        const grid = turn === 1 ? player1Grid : player2Grid
+        const grid = turn === 1 ? [...player1Grid] : [...player2Grid]
 
         const startPosition = (Number(playerShip.startPosition[0]) * 10) + Number(playerShip.startPosition[1])
         const endPosition = (Number(playerShip.endPosition[0]) * 10) + Number(playerShip.endPosition[1])
@@ -352,7 +355,7 @@ function updateGrid() {
             player1Grid.splice(0, 100, ...grid)
         }
         else {
-            player2Grid.splice(0, 100, ...grid)
+            // player2Grid.splice(0, 100, ...grid)
         }
     }
     else if (gameStatus === 'playing') {
