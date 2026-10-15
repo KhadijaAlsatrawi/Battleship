@@ -61,6 +61,7 @@ let boardUpdated // used to check is the board have been updated (true / false)
 let selectedShip // store the initially selected ship relevent only befor the actul game start
 let message // holds the massege (errors, instruction to be displayed)
 let playerShip //store the information of the ship befor updating the array
+let shipDirection //horizontal (H) or vertical (V)
 
 /*------------------------ Cached Element References ------------------------*/
 //caching the main containors
@@ -93,98 +94,13 @@ function init() {
     boardUpdated = false
     selectedShip = ''
     message = ''
+    shipDirection = 'H'
     render()
 }
 
 //a function to render/update the HTML
 function render() {
     updateBoard()
-}
-
-// update the boards
-function updateBoard() {
-    //if its player 1
-    if (turn === 1) {
-        for (let i = 0; i < player1Grid; i++) {
-            //for each item in player 1 grid
-            if (player1Grid[i] === 'A') {
-                grid2Els[i].computedStyleMap.backgroundColor = 'red'
-            }
-            else if (player1Grid[i] === 'B') {
-                grid2Els[i].computedStyleMap.backgroundColor = 'orange'
-            }
-            else if (player1Grid[i] === 'C') {
-                grid2Els[i].computedStyleMap.backgroundColor = 'yellow'
-            }
-            else if (player1Grid[i] === 'D') {
-                grid2Els[i].computedStyleMap.backgroundColor = 'green'
-            }
-            else if (player1Grid[i] === 'E') {
-                grid2Els[i].computedStyleMap.backgroundColor = 'blue'
-            }
-            else if (player1Grid[i] === 'N') {
-                grid2Els[i].textContent = 'X'
-                grid2Els[i].computedStyleMap.color = 'black'
-            }
-            else if (player1Grid[i] === 'Y') {
-                grid2Els[i].textContent = 'X'
-                grid2Els[i].computedStyleMap.color = 'red'
-            }
-        }
-
-        //for each item in player 2 grid
-        for (let i = 0; i < player2Grid; i++) {
-            if (player2Grid[i] === 'N') {
-                grid2Els[i].textContent = 'X'
-                grid2Els[i].computedStyleMap.color = 'black'
-            }
-            else if (player2Grid[i] === 'Y') {
-                grid2Els[i].textContent = 'X'
-                grid2Els[i].computedStyleMap.color = 'red'
-            }
-        }
-    }
-    // if its player 2
-    else {
-        for (let i = 0; i < player2Grid; i++) {
-            //for each item in player 2 grid
-            if (player2Grid[i] === 'A') {
-                grid2Els[i].computedStyleMap.backgroundColor = 'red'
-            }
-            else if (player2Grid[i] === 'B') {
-                grid2Els[i].computedStyleMap.backgroundColor = 'orange'
-            }
-            else if (player2Grid[i] === 'C') {
-                grid2Els[i].computedStyleMap.backgroundColor = 'yellow'
-            }
-            else if (player2Grid[i] === 'D') {
-                grid2Els[i].computedStyleMap.backgroundColor = 'green'
-            }
-            else if (player2Grid[i] === 'E') {
-                grid2Els[i].computedStyleMap.backgroundColor = 'blue'
-            }
-            else if (player2Grid[i] === 'N') {
-                grid2Els[i].textContent = 'X'
-                grid2Els[i].computedStyleMap.color = 'black'
-            }
-            else if (player2Grid[i] === 'Y') {
-                grid2Els[i].textContent = 'X'
-                grid2Els[i].computedStyleMap.color = 'red'
-            }
-        }
-
-        //for each item in player 1 grid
-        for (let i = 0; i < player1Grid; i++) {
-            if (player1Grid[i] === 'N') {
-                grid2Els[i].textContent = 'X'
-                grid2Els[i].computedStyleMap.color = 'black'
-            }
-            else if (player1Grid[i] === 'Y') {
-                grid2Els[i].textContent = 'X'
-                grid2Els[i].computedStyleMap.color = 'red'
-            }
-        }
-    }
 }
 
 //saves the selected ship in the selected ship variable
@@ -219,8 +135,9 @@ function handleGrid1Click() {
 
 //clicking on your own grid
 function handleGrid2Click(event) {
+    //if the game in placing status
     if (gameStatus === 'placing') {
-        if (selectedShip.name !== '') {
+        if (selectedShip !== '') {
             message = 'select a starting position'
             placingShips(event)
         }
@@ -233,136 +150,176 @@ function handleGrid2Click(event) {
 
 // checks the starting position, and store it if empty, check the ending position, conferm the length, store the ending position
 function placingShips(event) {
-    playerShip = retreveShip()
+    playerShip = retrieveShip()
+
     //split the ID to Row and column values
     const saparetedID = event.target.id.split('-')
+
     //check if the starting position is empty
     if (playerShip.startPosition[0] === '' && playerShip.startPosition[1] === '') {
-        //store the starting position
-        playerShip.startPosition[0] = saparetedID[0]
-        playerShip.startPosition[1] = saparetedID[1]
-        //change the message
-        message = 'select a ending position'
-    }
-    //check if the ending position is empty
-    else if (playerShip.endPosition[0] === '' && playerShip.endPosition[1] === '') {
-        //checks if the length selected matches the ships length
-        if (Number(playerShip.startPosition[0]) - Number(saparetedID[0]) === (selectedShip.length - 1) ||
-            Number(playerShip.startPosition[0]) - Number(saparetedID[0]) === -(selectedShip.length - 1) ||
-            Number(playerShip.startPosition[1]) - Number(saparetedID[1]) === (selectedShip.length - 1) ||
-            Number(playerShip.startPosition[1]) - Number(saparetedID[1]) === -(selectedShip.length - 1)
-        ) {
-            //store the ending position
-            playerShip.endPosition[0] = saparetedID[0]
-            playerShip.endPosition[1] = saparetedID[1]
+        if (checkValidPosition()) {
+            //store the starting position
+            playerShip.startPosition[0] = saparetedID[0]
+            playerShip.startPosition[1] = saparetedID[1]
 
-            console.log(playerShip)
-            console.log(playerShip.startPosition[0] - saparetedID[0])
-            console.log(playerShip.startPosition[1] - saparetedID[1])
+            //if the direction is horizontal then the row does not change only the columns
+            //if the direction is not horizontal then the column does not change only the rows
+            endRow = shipDirection === 'H' ? (saparetedID[0]) : (Number(saparetedID[0]) + Number(playerShip.shipLength))
+            endCol = shipDirection === 'H' ? (Number(saparetedID[1]) + Number(playerShip.shipLength)) : (playerShip.startPosition[1])
+
+            //store the ending position
+            playerShip.endPosition[0] = endRow
+            playerShip.endPosition[1] = endCol
+
+            removeItemFromBox()
+            updateGrid()
         }
         else {
-            //updates the message if the length is incorrect
-            message = `the ships length is ${selectedShip.length}, Select an appropriate end position`
-            console.log(message)
+            message = `cannot place the ship here`
         }
     }
 }
 
 //retrevie the object of the player ship form the player ships array
-function retreveShip() {
-    if (turn === 1) {
-        return player1Ships.find(oneShip => oneShip.name === selectedShip.name)
-    }
-    else {
-        return player2Ships.find(oneShip => oneShip.name === selectedShip.name)
-    }
-}
-
-//deplace the ship in player ships array with the playerShip variable
-function UpdateplayerShips() {
-    if (turn === 1) {
-        let index = player1Ships.findIndex(oneShip => oneShip.name === playerShip.name)
-        player1Ships.splice(index, 1, playerShip)
-    }
-    else {
-        let index = player2Ships.findIndex(oneShip => oneShip.name === playerShip.name)
-        player2Ships.splice(index, 1, playerShip)
-    }
-}
-
-//updated the playerGrid arrays
-function updateGrid() {
-    if (turn === 1) {
-        if (Number(playerShip.endPosition[0]) - Number(playerShip.startPosition[0]) === 0) {
-            // the row value is not changed
-            if (Number(playerShip.endPosition[1]) - Number(playerShip.startPosition[1]) === (playerShip.length - 1)) {
-                //if the end column > start column
-                for (let i = 1; i <= Number(playerShip.endPosition[1]) - Number(playerShip.startPosition[1]); i++) {
-                    player1Grid.fill(
-                        playerShip.name,
-                        (startPosition[0] + (i * 10)) + startPosition[1],
-                        (startPosition[0] + (i * 10)) + (startPosition[1] + 1)
-                    )
-                }
-            }
-            else {
-                //if the start column >  end column
-                for (let i = 1; i <= Number(playerShip.startPosition[1]) - Number(playerShip.endPosition[1]); i++) {
-                    player1Grid.fill(
-                        playerShip.name,
-                        (endPosition[0] - (i * 10)) + startPosition[1],
-                        (endPosition[0] - (i * 10)) + (startPosition[1] + 1)
-                    )
-                }
-            }
-        }
-        else if (Number(playerShip.endPosition[0]) - Number(playerShip.startPosition[0]) === (playerShip.length - 1)) {
-            // the row value changed positively endRow > startRow && is the same as the length
-            player1Grid.fill(
-                playerShip.name,
-                (startPosition[0] * 10 + startPosition[1]),
-                (endPosition[0] * 10 + endPosition[1] + 1)
-            )
-        }
-        else {
-            // the row changed negatively startRow > endRow
-            player1Grid.fill(
-                playerShip.name,
-                (endPosition[0] * 10 + endPosition[1]),
-                (startPosition[0] * 10 + startPosition[1] + 1)
-            )
-        }
-    }
-    else {
-
-    }
+function retrieveShip() {
+    //check the turn and place the correct ships in the ships const
+    const ships = turn === 1 ? player1Ships : player2Ships
+    return ships.find(oneShip => oneShip.name === selectedShip.name)
 }
 
 function checkValidPosition() {
+    //check the turn and place the correct grid in the grid const
+    const grid = turn === 1 ? player1Grid : player2Grid
 
+    //store the ship position
+    const startingPoition = Number(playerShip.startPosition[0]) * 10 + Number(playerShip.startPosition[1])
+    const endingPosition = Number(playerShip.endPosition[0]) * 10 + Number(playerShip.endPosition[1])
+
+    //store a slice of the grid where the ship is placed
+    const selectedPosition = grid.slice(startingPoition, (endingPosition + 1))
+    //if all boxes are ermpty then return true (ship can be placed here)
+    return selectedPosition.every(onePosition => onePosition === '')
 }
 
 //removes the items from the item box
 function removeItemFromBox() {
     if (selectedShip.name === 'A') {
         shipAEl.classList.add('hidden')
-        selectedShip = ''
     }
     else if (selectedShip.name === 'B') {
         shipBEl.classList.add('hidden')
-        selectedShip = ''
     }
     else if (selectedShip.name === 'C') {
         shipCEl.classList.add('hidden')
-        selectedShip = ''
     }
     else if (selectedShip.name === 'D') {
         shipDEl.classList.add('hidden')
-        selectedShip = ''
     }
     else if (selectedShip.name === 'E') {
         shipEEl.classList.add('hidden')
-        selectedShip = ''
+    }
+    selectedShip = ''
+}
+
+
+
+//switch the user
+function switchUser() {
+    // if the board is updated then witch the user
+    if (updateBoard) {
+        // if turn is 1 then change it to 2 else turn it to 1
+        turn = turn === 1 ? 2 : 1
+    }
+    render()
+}
+
+//deplace the ship in player ships array with the playerShip variable
+function UpdateplayerShips() {
+    //check the turn and place the correct ships in the ships const
+    const ships = turn === 1 ? player1Grid : player2Grid
+    let index = player1Ships.findIndex(oneShip => oneShip.name === playerShip.name)
+    ships.splice(index, 1, playerShip)
+
+}
+
+//updated the playerGrid arrays
+function updateGrid() {
+    if (gameStatus === 'placing') {
+        //check the turn and place the correct grid in the grid const
+        const grid = turn === 1 ? player1Grid : player2Grid
+
+        const startPosition = (Number(playerShip.startPosition[0]) * 10) + Number(playerShip.startPosition[1])
+        const endPosition = (Number(playerShip.endPosition[0]) * 10) + Number(playerShip.endPosition[1])
+
+        const colDiff = Number(playerShip.endPosition[1]) - Number(playerShip.startPosition[1])
+        const rowDiff = Number(playerShip.endPosition[0]) - Number(playerShip.startPosition[0])
+
+        if (rowDiff === 0 && colDiff !== 0) {
+            //horizontal change
+            grid.fill(playerShip.name, (startPosition), (endPosition + 1))
+        }
+        else if (colDiff === 0 && rowDiff !== 0) {
+            //vertical change
+            for (let i = 0; i < colDiff; i++) {
+                grid.fill(playerShip.name, (startPosition), (startPosition + 1))
+                startPosition += 10
+            }
+        }
+
+        //checks the turn and update the actual players grid
+        if (turn === 1) {
+            player1Grid.splice(0, 100, ...grid)
+        }
+        else {
+            player2Grid.splice(0, 100, ...grid)
+        }
+    }
+    else if(gameStatus === 'playing'){
+        //gameplay logic
+    }
+}
+
+// update the boards
+function updateBoard() {
+    //check the turn and place the correct grid in the grid const
+    const grid = turn === 1 ? player1Grid : player2Grid
+    const opponentGrid = turn === 1 ? player2Grid : player1Grid
+    for (let i = 0; i < grid.length; i++) {
+        if (grid[i] === 'A') {
+            grid2Els[i].style.backgroundColor = 'red'
+        }
+        else if (grid[i] === 'B') {
+            grid2Els[i].style.backgroundColor = 'orange'
+        }
+        else if (grid[i] === 'C') {
+            grid2Els[i].style.backgroundColor = 'yellow'
+        }
+        else if (grid[i] === 'D') {
+            grid2Els[i].style.backgroundColor = 'green'
+        }
+        else if (grid[i] === 'E') {
+            grid2Els[i].style.backgroundColor = 'blue'
+        }
+        else if (grid[i] === 'N') {
+            grid2Els[i].textContent = 'X'
+            grid2Els[i].style.color = 'black'
+        }
+        else if (grid[i] === 'Y') {
+            grid2Els[i].textContent = 'X'
+            grid2Els[i].style.color = 'red'
+        }
+    }
+
+    //for each item in the opponent grid
+    for (let i = 0; i < opponentGrid.length; i++) {
+        if (opponentGrid[i] === 'N') {
+            grid1Els[i].textContent = 'X'
+            grid1Els[i].style.color = 'black'
+        }
+        else if (opponentGrid[i] === 'Y') {
+            grid1Els[i].textContent = 'X'
+            grid1Els[i].style.color = 'red'
+        }
     }
 }
 
@@ -375,10 +332,12 @@ shipCEl.addEventListener('click', handleShipClick)
 shipDEl.addEventListener('click', handleShipClick)
 shipEEl.addEventListener('click', handleShipClick)
 
-for (sqr of grid1Els) {
+for (const sqr of grid1Els) {
     sqr.addEventListener('click', handleGrid1Click)
 }
 
-for (sqr of grid2Els) {
+for (const sqr of grid2Els) {
     sqr.addEventListener('click', handleGrid2Click)
 }
+
+
