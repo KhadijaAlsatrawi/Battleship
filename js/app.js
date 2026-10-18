@@ -60,9 +60,11 @@ let gameStatus // store the game status
 let boardUpdated // used to check is the board have been updated (true / false)
 let selectedShip // store the initially selected ship relevent only befor the actul game start
 let message // holds the massege (errors, instruction to be displayed)
-let playerShip //store the information of the ship befor updating the array
+let playerShip//store the information of the ship befor updating the array
 let shipDirection //horizontal (H) or vertical (V)
 let selectedPosition // store the position selected on the opponent grid
+let isSunk
+let opponentShipName
 
 /*------------------------ Cached Element References ------------------------*/
 //caching the main containors
@@ -96,16 +98,17 @@ function init() {
     selectedShip = ''
     message = ''
     shipDirection = 'H'
+    isSunk = false
     render()
 }
 
 //a function to render/update the HTML
 function render() {
+    if (gameStatus === 'over') {
+        message = `player ${turn} is the winner`
+    }
     updateBoard()
     updateMessage()
-    console.log(`in the render function:`, playerShip)
-    console.log(`in the render function: ${player1Ships[0].endPosition[0]}`)
-
 }
 
 //saves the selected ship in the selected ship variable
@@ -134,26 +137,35 @@ function handleShipClick(event) {
 //clicking on the oponent grid
 function handleGrid1Click(event) {
     const saparetedID = event.target.id.split('-')
-    selectedPosition = saparetedID.join('')
+    selectedPosition = Number(saparetedID.join(''))
 
     const opponentShip = checkForOpponentShip(selectedPosition)
+    const opponentGrid = turn === 1 ? player1Grid : player2Grid
+    opponentShipName = opponentGrid[selectedPosition]
+
+    checkBoardUpdated()
     updateOpponentGrid(selectedPosition, opponentShip)
+    checkSunkShip()
+    updateShipStatus()
     checkForWinner()
-    render()
-    const swichPlayer = setInterval(() => {
+    for (let sqr of grid1Els) {
+        sqr.removeEventListener('click', handleGrid1Click)
+    }
+    const switchTurnInterval = setInterval(() => {
         switchTurn()
         render()
-        clearInterval(swichPlayer)
+        clearInterval(switchTurnInterval)
+
+        for (let sqr of grid1Els) {
+            sqr.addEventListener('click', handleGrid1Click)
+        }
     }, 5000)
 
-
+    render()
 }
 
 //clicking on your own grid
 function handleGrid2Click(event) {
-
-    console.log(`in the handle click function: ${selectedShip.name}`)
-
     //if the game in placing status
     if (gameStatus === 'placing') {
         if (selectedShip !== '') {
@@ -181,6 +193,11 @@ function handleShipDirectionClick(event) {
 
 //function to handle clicking on the game button
 function handleStatusBtnClick() {
+    shipAEl.addEventListener('click', handleShipClick)
+    shipBEl.addEventListener('click', handleShipClick)
+    shipCEl.addEventListener('click', handleShipClick)
+    shipDEl.addEventListener('click', handleShipClick)
+    shipEEl.addEventListener('click', handleShipClick)
     if (gameStatus === 'off') {
         gameStatus = 'placing'
         gameBtnEl.textContent = 'Next'
@@ -214,9 +231,7 @@ function handleStatusBtnClick() {
 
 // checks the starting position, and store it if empty, check the ending position, conferm the length, store the ending position
 function placingShips(event) {
-    console.log(`in the placing ship function: ${selectedShip.name}`)
-    playerShip = retrieveShip()
-    console.log(`in the placing ship function:`, playerShip)
+    retrieveShip()
     //split the ID to Row and column values
     const saparetedID = event.target.id.split('-')
     //check if the starting position is empty
@@ -254,20 +269,29 @@ function placingShips(event) {
         }
     }
     selectedShip = ''
-    playerShip = ''
 }
 
 //retrevie the object of the player ship form the player ships array
 function retrieveShip() {
-    //check the turn and place the correct ships in the ships const
-    //const ships = turn === 1 ? player1Ships : player2Ships
     if (turn === 1) {
-        return player1Ships.find(oneShip => oneShip.name === selectedShip.name)
+        playerShip = player1Ships.find(oneShip => oneShip.name === selectedShip.name)
     }
     else {
-        return player2Ships.find(oneShip => oneShip.name === selectedShip.name)
+        playerShip = player2Ships.find(oneShip => oneShip.name === selectedShip.name)
     }
 
+}
+
+function retrieveOppnentShip() {
+    //check the turn and place the correct ships in the ships const
+    let ship
+    if (turn === 1) {
+        ship = player1Ships.find(oneShip => oneShip.name === opponentShipName)
+    }
+    else {
+        ship = player2Ships.find(oneShip => oneShip.name === opponentShipName)
+    }
+    return ship
 }
 
 function checkValidPosition() {
@@ -355,6 +379,7 @@ function checkAllItemsPlaced() {
     }
 }
 
+//this function checks if the opponent has a ship in the selected position
 function checkForOpponentShip() {
     const grid = turn === 1 ? player2Grid : player1Grid
     if (grid[selectedPosition] !== '') {
@@ -365,46 +390,70 @@ function checkForOpponentShip() {
     }
 }
 
+//this function checks if the opponent ship sunk or not
 function checkSunkShip() {
-    const opponentGrid = turn === 1 ? player1Grid : player2Grid
-
-    const shipName = grid[selectedPosition]
-
-    if (shipName !== '' && shipName !== 'Y' && shipName !== 'N')
-        if (opponentGrid.includes(shipName)) {
-            return false
+    const opponentGrid = turn === 1 ? player2Grid : player1Grid
+    // if the element in the grid is not empty or Y or N then check if it includes the ship name
+    if (opponentShipName !== '' && opponentShipName !== 'Y' && opponentShipName !== 'N')
+        //if the grid includes the ship name return true if it does not return false
+        if (opponentGrid.includes(opponentShipName)) {
+            console.log(`checkSunkShip function: false`)
+            console.log(opponentGrid)
+            isSunk = false
         }
         else {
-            return true
+            console.log(`checkSunkShip function: false`)
+            isSunk = true
+            console.log(opponentGrid)
         }
 }
 
-function updateShipStatus(sunk) {
-    const shipName = grid[selectedPosition]
-    const opponentShips = turn === 1 ? player2Ships : player1Ships
-    selectedShip.name = shipName
-
-    if (sunk) {
-        playerShip = retrieveShip()
-        playerShip.status = 'sunk'
-        let index = opponentShips.findIndex(oneShip => oneShip.name === playerShip.name)
-        opponentShips.splice(index, 1, playerShip)
+function checkBoardUpdated() {
+    if (opponentShipName === 'Y' || opponentShipName === 'N') {
+        boardUpdated = false
+    }
+    else {
+        boardUpdated = true
     }
 }
 
+//update the ship status in the player ship array 
+function updateShipStatus() {
+    const opponentShips = turn === 1 ? player2Ships : player1Ships
+
+    if (isSunk) {
+        //retrieve the ship and update the status
+        playerShip = retrieveOppnentShip()
+        playerShip.status = 'sunk'
+
+        //find the index of the ship and replase it with the updated ship
+        let index = opponentShips.findIndex(oneShip => oneShip.name === playerShip.name)
+        opponentShips.splice(index, 1, playerShip)
+        //cleare the name
+        selectedShip.name = ''
+    }
+}
+
+//checks if the opponent chip are all sunk
 function checkForWinner() {
     const opponentShips = turn === 1 ? player2Ships : player1Ships
-    opponentShips.every(oneShip => oneShip.status === 'sunk')
-
+    const allSunk = opponentShips.every(oneShip => oneShip.status === 'sunk')
+    console.log(allSunk)
+    if (allSunk) {
+        gameStatus = 'over'
+    }
 }
 
 //switch the user
 function switchTurn() {
     // if the board is updated then witch the user
-    if (boardUpdated) {
+    if (boardUpdated && gameStatus !== 'over') {
         // if turn is 1 then change it to 2 else turn it to 1
         turn = turn === 1 ? 2 : 1
         playerTurnEl.textContent = `It is Player ${turn} turn`
+        if (gameStatus === 'playing') {
+            boardUpdated = false
+        }
     }
 }
 
@@ -525,12 +574,6 @@ function updateMessage() {
 
 /*----------------------------- Event Listeners -----------------------------*/
 init()
-
-shipAEl.addEventListener('click', handleShipClick)
-shipBEl.addEventListener('click', handleShipClick)
-shipCEl.addEventListener('click', handleShipClick)
-shipDEl.addEventListener('click', handleShipClick)
-shipEEl.addEventListener('click', handleShipClick)
 
 for (const sqr of grid1Els) {
     sqr.addEventListener('click', handleGrid1Click)
