@@ -10,19 +10,19 @@ const ships = [
 
 // 2 constants to store the player ships and their informatins
 const player1Ships = [
-    { name: 'A', startPosition: ['', ''], endPosition: ['', ''], shipLength: 5 },
-    { name: 'B', startPosition: ['', ''], endPosition: ['', ''], shipLength: 4 },
-    { name: 'C', startPosition: ['', ''], endPosition: ['', ''], shipLength: 3 },
-    { name: 'D', startPosition: ['', ''], endPosition: ['', ''], shipLength: 3 },
-    { name: 'E', startPosition: ['', ''], endPosition: ['', ''], shipLength: 2 }
+    { name: 'A', startPosition: ['', ''], endPosition: ['', ''], shipLength: 5, status: 'standing' },
+    { name: 'B', startPosition: ['', ''], endPosition: ['', ''], shipLength: 4, status: 'standing' },
+    { name: 'C', startPosition: ['', ''], endPosition: ['', ''], shipLength: 3, status: 'standing' },
+    { name: 'D', startPosition: ['', ''], endPosition: ['', ''], shipLength: 3, status: 'standing' },
+    { name: 'E', startPosition: ['', ''], endPosition: ['', ''], shipLength: 2, status: 'standing' }
 ]
 
 const player2Ships = [
-    { name: 'A', startPosition: ['', ''], endPosition: ['', ''], shipLength: 5 },
-    { name: 'B', startPosition: ['', ''], endPosition: ['', ''], shipLength: 4 },
-    { name: 'C', startPosition: ['', ''], endPosition: ['', ''], shipLength: 3 },
-    { name: 'D', startPosition: ['', ''], endPosition: ['', ''], shipLength: 3 },
-    { name: 'E', startPosition: ['', ''], endPosition: ['', ''], shipLength: 2 }
+    { name: 'A', startPosition: ['', ''], endPosition: ['', ''], shipLength: 5, status: 'standing' },
+    { name: 'B', startPosition: ['', ''], endPosition: ['', ''], shipLength: 4, status: 'standing' },
+    { name: 'C', startPosition: ['', ''], endPosition: ['', ''], shipLength: 3, status: 'standing' },
+    { name: 'D', startPosition: ['', ''], endPosition: ['', ''], shipLength: 3, status: 'standing' },
+    { name: 'E', startPosition: ['', ''], endPosition: ['', ''], shipLength: 2, status: 'standing' }
 ]
 
 // 2 constints to store the player grids
@@ -62,6 +62,7 @@ let selectedShip // store the initially selected ship relevent only befor the ac
 let message // holds the massege (errors, instruction to be displayed)
 let playerShip //store the information of the ship befor updating the array
 let shipDirection //horizontal (H) or vertical (V)
+let selectedPosition // store the position selected on the opponent grid
 
 /*------------------------ Cached Element References ------------------------*/
 //caching the main containors
@@ -75,7 +76,6 @@ const grid2Els = document.querySelectorAll('.grid-box2')
 
 //caching the elements of the middle container
 const playerTurnEl = document.querySelector('#player-turn')
-const timerEl = document.querySelector('#timer')
 const shipDirectionBtnEl = document.querySelector('#ship-direction')
 const gameBtnEl = document.querySelector('#game-btn')
 const messageEl = document.querySelector('#message')
@@ -134,7 +134,7 @@ function handleShipClick(event) {
 //clicking on the oponent grid
 function handleGrid1Click(event) {
     const saparetedID = event.target.id.split('-')
-    const selectedPosition = saparetedID.join('')
+    selectedPosition = saparetedID.join('')
 
     const opponentShip = checkForOpponentShip(selectedPosition)
     updateOpponentGrid(selectedPosition, opponentShip)
@@ -145,6 +145,8 @@ function handleGrid1Click(event) {
         render()
         clearInterval(swichPlayer)
     }, 5000)
+
+
 }
 
 //clicking on your own grid
@@ -260,7 +262,6 @@ function retrieveShip() {
     //check the turn and place the correct ships in the ships const
     //const ships = turn === 1 ? player1Ships : player2Ships
     if (turn === 1) {
-        console.log(`retrieve ship function: ${player1Ships[0].endPosition[0]}`)
         return player1Ships.find(oneShip => oneShip.name === selectedShip.name)
     }
     else {
@@ -279,17 +280,17 @@ function checkValidPosition() {
 
     if (shipDirection === 'H') {
         //store a slice of the grid where the ship is placed
-        const selectedPosition = grid.slice(startingPoition, (endingPosition + 1))
+        const selectedShipPosition = grid.slice(startingPoition, (endingPosition + 1))
 
         //if all boxes are ermpty then return true (ship can be placed here)
-        const emptySpace = selectedPosition.every(onePosition => onePosition === '')
+        const emptySpace = selectedShipPosition.every(onePosition => onePosition === '')
 
         //end calumn cannot be < then start column, the rows should be the same and emptySpace should be true
         return playerShip.endPosition[1] > playerShip.startPosition[1] && playerShip.startPosition[0] === playerShip.endPosition[0] && emptySpace
     }
     else {
         //create the array to check for empty places
-        const selectedPosition = []
+        const selectedShipPosition = []
 
         //save the startingPoition as a variable to change it 
         let loopIndex = startingPoition
@@ -298,14 +299,14 @@ function checkValidPosition() {
         for (let i = 0; i < playerShip.shipLength; i++) {
 
             //push the grid element using the index
-            selectedPosition.push(grid[loopIndex])
+            selectedShipPosition.push(grid[loopIndex])
 
             //add 10 to the endex to rech the next row
             loopIndex += 10
         }
 
         //if all boxes are ermpty then return true (ship can be placed here)
-        const emptySpace = selectedPosition.every(onePosition => onePosition === '')
+        const emptySpace = selectedShipPosition.every(onePosition => onePosition === '')
 
         //end row cannot be < then start row, the columns should be the same and emptySpace should be true
         return playerShip.endPosition[0] > playerShip.startPosition[0] && playerShip.startPosition[1] === playerShip.endPosition[1] && emptySpace
@@ -354,7 +355,7 @@ function checkAllItemsPlaced() {
     }
 }
 
-function checkForOpponentShip(selectedPosition) {
+function checkForOpponentShip() {
     const grid = turn === 1 ? player2Grid : player1Grid
     if (grid[selectedPosition] !== '') {
         return 'Y'
@@ -364,7 +365,36 @@ function checkForOpponentShip(selectedPosition) {
     }
 }
 
+function checkSunkShip() {
+    const opponentGrid = turn === 1 ? player1Grid : player2Grid
+
+    const shipName = grid[selectedPosition]
+
+    if (shipName !== '' && shipName !== 'Y' && shipName !== 'N')
+        if (opponentGrid.includes(shipName)) {
+            return false
+        }
+        else {
+            return true
+        }
+}
+
+function updateShipStatus(sunk) {
+    const shipName = grid[selectedPosition]
+    const opponentShips = turn === 1 ? player2Ships : player1Ships
+    selectedShip.name = shipName
+
+    if (sunk) {
+        playerShip = retrieveShip()
+        playerShip.status = 'sunk'
+        let index = opponentShips.findIndex(oneShip => oneShip.name === playerShip.name)
+        opponentShips.splice(index, 1, playerShip)
+    }
+}
+
 function checkForWinner() {
+    const opponentShips = turn === 1 ? player2Ships : player1Ships
+    opponentShips.every(oneShip => oneShip.status === 'sunk')
 
 }
 
@@ -400,9 +430,9 @@ function UpdateplayerShips() {
     ships.splice(index, 1, playerShip)
 }
 
-function updateOpponentGrid(selectedPosition, updateOpponentGrid) {
+function updateOpponentGrid(selectedPosition, opponentShip) {
     const grid = turn === 1 ? player2Grid : player1Grid
-    grid.fill(updateOpponentGrid, selectedPosition, Number(selectedPosition) + 1)
+    grid.fill(opponentShip, selectedPosition, Number(selectedPosition) + 1)
 }
 
 //updated the playerGrid arrays
