@@ -60,7 +60,7 @@ let gameStatus // store the game status
 let boardUpdated // used to check is the board have been updated (true / false)
 let selectedShip // store the initially selected ship relevent only befor the actul game start
 let message // holds the massege (errors, instruction to be displayed)
-let playerShip//store the information of the ship befor updating the array
+let playerShip //store the information of the ship befor updating the array
 let shipDirection //horizontal (H) or vertical (V)
 let selectedPosition // store the position selected on the opponent grid
 let isSunk
@@ -109,6 +109,46 @@ function render() {
     }
     updateBoard()
     updateMessage()
+}
+
+//function to handle clicking on the game button
+function handleStatusBtnClick() {
+    //adds the event listners when the game start
+    shipAEl.addEventListener('click', handleShipClick)
+    shipBEl.addEventListener('click', handleShipClick)
+    shipCEl.addEventListener('click', handleShipClick)
+    shipDEl.addEventListener('click', handleShipClick)
+    shipEEl.addEventListener('click', handleShipClick)
+    
+    if (gameStatus === 'off') {
+        gameStatus = 'placing'
+        gameBtnEl.textContent = 'Next'
+        shipDirectionBtnEl.classList.remove('hidden')
+        message = `select a Ship`
+    }
+    else if (gameStatus === 'placing') {
+        if (checkAllItemsPlaced()) {
+            if (turn === 1) {
+                gameBtnEl.textContent = 'Play'
+            }
+            else {
+                gameStatus = 'playing'
+                shipDirectionBtnEl.classList.add('hidden')
+                message = `select a position on the opponent grid to hit`
+                for (let sqr of grid2Els) {
+                    sqr.removeEventListener('click', handleGrid2Click)
+                }
+                gameBtnEl.classList.add('hidden')
+            }
+            boardUpdated = true
+        }
+        else {
+            boardUpdated = false
+        }
+    }
+    switchTurn()
+    setGamePlayBoards()
+    render()
 }
 
 //saves the selected ship in the selected ship variable
@@ -191,44 +231,6 @@ function handleShipDirectionClick(event) {
     }
 }
 
-//function to handle clicking on the game button
-function handleStatusBtnClick() {
-    shipAEl.addEventListener('click', handleShipClick)
-    shipBEl.addEventListener('click', handleShipClick)
-    shipCEl.addEventListener('click', handleShipClick)
-    shipDEl.addEventListener('click', handleShipClick)
-    shipEEl.addEventListener('click', handleShipClick)
-    if (gameStatus === 'off') {
-        gameStatus = 'placing'
-        gameBtnEl.textContent = 'Next'
-        shipDirectionBtnEl.classList.remove('hidden')
-        message = `select a Ship`
-    }
-    else if (gameStatus === 'placing') {
-        if (checkAllItemsPlaced()) {
-            if (turn === 1) {
-                gameBtnEl.textContent = 'Play'
-            }
-            else {
-                gameStatus = 'playing'
-                shipDirectionBtnEl.classList.add('hidden')
-                message = `select a position on the opponent grid to hit`
-                for (let sqr of grid2Els) {
-                    sqr.removeEventListener('click', handleGrid2Click)
-                }
-                gameBtnEl.classList.add('hidden')
-            }
-            boardUpdated = true
-        }
-        else {
-            boardUpdated = false
-        }
-    }
-    switchTurn()
-    setGamePlayBoards()
-    render()
-}
-
 // checks the starting position, and store it if empty, check the ending position, conferm the length, store the ending position
 function placingShips(event) {
     retrieveShip()
@@ -279,7 +281,6 @@ function retrieveShip() {
     else {
         playerShip = player2Ships.find(oneShip => oneShip.name === selectedShip.name)
     }
-
 }
 
 function retrieveOppnentShip() {
@@ -337,26 +338,6 @@ function checkValidPosition() {
     }
 }
 
-//removes the items from the item box
-function removeItemFromBox() {
-    if (selectedShip.name === 'A') {
-        shipAEl.classList.add('hidden')
-    }
-    else if (selectedShip.name === 'B') {
-        shipBEl.classList.add('hidden')
-    }
-    else if (selectedShip.name === 'C') {
-        shipCEl.classList.add('hidden')
-    }
-    else if (selectedShip.name === 'D') {
-        shipDEl.classList.add('hidden')
-    }
-    else if (selectedShip.name === 'E') {
-        shipEEl.classList.add('hidden')
-    }
-    selectedShip = ''
-}
-
 //checks if all ships are placed 
 function checkAllItemsPlaced() {
     //store the ships array based on the player turn
@@ -408,29 +389,14 @@ function checkSunkShip() {
         }
 }
 
+//change the name and change the variable based on it
+// if it is Y or N means the player selected this place (sqr) befor
 function checkBoardUpdated() {
     if (opponentShipName === 'Y' || opponentShipName === 'N') {
         boardUpdated = false
     }
     else {
         boardUpdated = true
-    }
-}
-
-//update the ship status in the player ship array 
-function updateShipStatus() {
-    const opponentShips = turn === 1 ? player2Ships : player1Ships
-
-    if (isSunk) {
-        //retrieve the ship and update the status
-        playerShip = retrieveOppnentShip()
-        playerShip.status = 'sunk'
-
-        //find the index of the ship and replase it with the updated ship
-        let index = opponentShips.findIndex(oneShip => oneShip.name === playerShip.name)
-        opponentShips.splice(index, 1, playerShip)
-        //cleare the name
-        selectedShip.name = ''
     }
 }
 
@@ -442,6 +408,26 @@ function checkForWinner() {
     if (allSunk) {
         gameStatus = 'over'
     }
+}
+
+//removes the items from the item box
+function removeItemFromBox() {
+    if (selectedShip.name === 'A') {
+        shipAEl.classList.add('hidden')
+    }
+    else if (selectedShip.name === 'B') {
+        shipBEl.classList.add('hidden')
+    }
+    else if (selectedShip.name === 'C') {
+        shipCEl.classList.add('hidden')
+    }
+    else if (selectedShip.name === 'D') {
+        shipDEl.classList.add('hidden')
+    }
+    else if (selectedShip.name === 'E') {
+        shipEEl.classList.add('hidden')
+    }
+    selectedShip = ''
 }
 
 //switch the user
@@ -479,6 +465,24 @@ function UpdateplayerShips() {
     ships.splice(index, 1, playerShip)
 }
 
+//update the ship status in the player ship array 
+function updateShipStatus() {
+    const opponentShips = turn === 1 ? player2Ships : player1Ships
+
+    if (isSunk) {
+        //retrieve the ship and update the status
+        playerShip = retrieveOppnentShip()
+        playerShip.status = 'sunk'
+
+        //find the index of the ship and replase it with the updated ship
+        let index = opponentShips.findIndex(oneShip => oneShip.name === playerShip.name)
+        opponentShips.splice(index, 1, playerShip)
+        //cleare the name
+        selectedShip.name = ''
+    }
+}
+
+//fill the opponent grid with eather Y or N
 function updateOpponentGrid(selectedPosition, opponentShip) {
     const grid = turn === 1 ? player2Grid : player1Grid
     grid.fill(opponentShip, selectedPosition, Number(selectedPosition) + 1)
@@ -568,6 +572,7 @@ function updateBoard() {
     }
 }
 
+// change the text inside the message section in htnl
 function updateMessage() {
     messageEl.textContent = message
 }
