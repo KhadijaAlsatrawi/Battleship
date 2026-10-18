@@ -54,6 +54,32 @@ const player2Grid = [
     '', '', '', '', '', '', '', '', '', ''
 ]
 
+const player1GridOpponent = [
+    '', '', '', '', '', '', '', '', '', '',
+    '', '', '', '', '', '', '', '', '', '',
+    '', '', '', '', '', '', '', '', '', '',
+    '', '', '', '', '', '', '', '', '', '',
+    '', '', '', '', '', '', '', '', '', '',
+    '', '', '', '', '', '', '', '', '', '',
+    '', '', '', '', '', '', '', '', '', '',
+    '', '', '', '', '', '', '', '', '', '',
+    '', '', '', '', '', '', '', '', '', '',
+    '', '', '', '', '', '', '', '', '', ''
+]
+
+const player2GridOpponent = [
+    '', '', '', '', '', '', '', '', '', '',
+    '', '', '', '', '', '', '', '', '', '',
+    '', '', '', '', '', '', '', '', '', '',
+    '', '', '', '', '', '', '', '', '', '',
+    '', '', '', '', '', '', '', '', '', '',
+    '', '', '', '', '', '', '', '', '', '',
+    '', '', '', '', '', '', '', '', '', '',
+    '', '', '', '', '', '', '', '', '', '',
+    '', '', '', '', '', '', '', '', '', '',
+    '', '', '', '', '', '', '', '', '', ''
+]
+
 /*---------------------------- Variables (state) ----------------------------*/
 let turn //store player turn
 let gameStatus // store the game status
@@ -63,8 +89,8 @@ let message // holds the massege (errors, instruction to be displayed)
 let playerShip //store the information of the ship befor updating the array
 let shipDirection //horizontal (H) or vertical (V)
 let selectedPosition // store the position selected on the opponent grid
-let isSunk
-let opponentShipName
+let isSunk //holds the sunk status for the ships
+let opponentShipName //holds the opponent ship name befor it changes to Y or N
 
 /*------------------------ Cached Element References ------------------------*/
 //caching the main containors
@@ -97,15 +123,20 @@ function init() {
     boardUpdated = false
     selectedShip = ''
     message = ''
+    playerShip = ''
     shipDirection = 'H'
     isSunk = false
+    selectedPosition = ''
+    isSunk = false
+    opponentShipName = ''
     render()
 }
 
 //a function to render/update the HTML
 function render() {
     if (gameStatus === 'over') {
-        message = `player ${turn} is the winner`
+        message = `Player ${turn} is the winner`
+        playerTurnEl.textContent = ''
     }
     updateBoard()
     updateMessage()
@@ -119,12 +150,12 @@ function handleStatusBtnClick() {
     shipCEl.addEventListener('click', handleShipClick)
     shipDEl.addEventListener('click', handleShipClick)
     shipEEl.addEventListener('click', handleShipClick)
-    
+
     if (gameStatus === 'off') {
         gameStatus = 'placing'
         gameBtnEl.textContent = 'Next'
         shipDirectionBtnEl.classList.remove('hidden')
-        message = `select a Ship`
+        message = `Select a ship`
     }
     else if (gameStatus === 'placing') {
         if (checkAllItemsPlaced()) {
@@ -134,7 +165,7 @@ function handleStatusBtnClick() {
             else {
                 gameStatus = 'playing'
                 shipDirectionBtnEl.classList.add('hidden')
-                message = `select a position on the opponent grid to hit`
+                message = `Select a position on the opponent grid to hit`
                 for (let sqr of grid2Els) {
                     sqr.removeEventListener('click', handleGrid2Click)
                 }
@@ -169,7 +200,7 @@ function handleShipClick(event) {
         else if (event.target.id === 'E') {
             selectedShip = ships.find(oneShip => oneShip.name === 'E')
         }
-        message = `you selecter ${selectedShip.name} place the ship`
+        message = `You selecter ${selectedShip.name} place the ship`
     }
     render()
 }
@@ -209,11 +240,11 @@ function handleGrid2Click(event) {
     //if the game in placing status
     if (gameStatus === 'placing') {
         if (selectedShip !== '') {
-            message = 'select a starting position'
+            message = 'Select a starting position'
             placingShips(event)
         }
         else {
-            message = "Select a Ship"
+            message = "Select a ship"
         }
     }
     render()
@@ -257,7 +288,7 @@ function placingShips(event) {
             UpdateplayerShips()
         }
         else {
-            message = `cannot place the ship here select a Ship`
+            message = `Cannot place the ship here. Select a Ship`
             const ships = turn === 1 ? player1Ships : player2Ships
 
             playerShip.startPosition[0] = ''
@@ -362,7 +393,7 @@ function checkAllItemsPlaced() {
 
 //this function checks if the opponent has a ship in the selected position
 function checkForOpponentShip() {
-    const grid = turn === 1 ? player2Grid : player1Grid
+    const grid = turn === 1 ? player2GridOpponent : player1GridOpponent
     if (grid[selectedPosition] !== '') {
         return 'Y'
     }
@@ -373,7 +404,7 @@ function checkForOpponentShip() {
 
 //this function checks if the opponent ship sunk or not
 function checkSunkShip() {
-    const opponentGrid = turn === 1 ? player2Grid : player1Grid
+    const opponentGrid = turn === 1 ? player2GridOpponent : player1GridOpponent
     // if the element in the grid is not empty or Y or N then check if it includes the ship name
     if (opponentShipName !== '' && opponentShipName !== 'Y' && opponentShipName !== 'N')
         //if the grid includes the ship name return true if it does not return false
@@ -443,6 +474,8 @@ function switchTurn() {
     }
 }
 
+// remove the hidden class from the ships for player 2
+// if both players placed their ships then hide the item box and show board 1 
 function setGamePlayBoards() {
     if (gameStatus === 'placing' && boardUpdated) {
         shipAEl.classList.remove('hidden')
@@ -484,7 +517,7 @@ function updateShipStatus() {
 
 //fill the opponent grid with eather Y or N
 function updateOpponentGrid(selectedPosition, opponentShip) {
-    const grid = turn === 1 ? player2Grid : player1Grid
+    const grid = turn === 1 ? player2GridOpponent : player1GridOpponent
     grid.fill(opponentShip, selectedPosition, Number(selectedPosition) + 1)
 }
 
@@ -513,17 +546,20 @@ function updatePlayerGrid() {
             }
         }
     }
+    player1GridOpponent.splice(0, 100, ...player1Grid)
+    player2GridOpponent.splice(0, 100, ...player2Grid)
 }
 
 // update the boards
 function updateBoard() {
     //check the turn and place the correct grid in the grid const
     const grid = turn === 1 ? player1Grid : player2Grid
-    const opponentGrid = turn === 1 ? player2Grid : player1Grid
+    const grid2 = turn === 1 ? player1GridOpponent : player2GridOpponent
+    const opponentGrid = turn === 1 ? player2GridOpponent : player1GridOpponent
 
     for (let i = 0; i < grid.length; i++) {
         if (grid[i] === 'A') {
-            grid2Els[i].style.backgroundColor = 'red'
+            grid2Els[i].innerHTML = '<img src="./img1.png" alt="A">'
         }
         else if (grid[i] === 'B') {
             grid2Els[i].style.backgroundColor = 'orange'
@@ -537,20 +573,20 @@ function updateBoard() {
         else if (grid[i] === 'E') {
             grid2Els[i].style.backgroundColor = 'blue'
         }
-        else if (grid[i] === 'N') {
-            grid2Els[i].textContent = 'X'
-            grid2Els[i].style.color = 'black'
-            grid2Els[i].style.backgroundColor = 'white'
-        }
-        else if (grid[i] === 'Y') {
-            grid2Els[i].textContent = 'X'
-            grid2Els[i].style.color = 'red'
-            grid2Els[i].style.backgroundColor = 'white'
-        }
         else {
             grid2Els[i].textContent = ''
             grid2Els[i].style.color = 'white'
             grid2Els[i].style.backgroundColor = 'white'
+        }
+    }
+    for (let i = 0; i < grid2.length; i++) {
+        if (grid2[i] === 'N') {
+            grid2Els[i].textContent = 'X'
+            grid2Els[i].style.color = 'black'
+        }
+        else if (grid2[i] === 'Y') {
+            grid2Els[i].textContent = 'X'
+            grid2Els[i].style.color = 'red'
         }
     }
 
@@ -570,6 +606,14 @@ function updateBoard() {
             grid1Els[i].style.backgroundColor = 'none'
         }
     }
+}
+
+function updatePlayerBoard() {
+
+}
+
+function updateOpponentBoard() {
+
 }
 
 // change the text inside the message section in htnl
