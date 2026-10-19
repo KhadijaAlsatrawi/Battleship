@@ -91,6 +91,7 @@ let shipDirection //horizontal (H) or vertical (V)
 let selectedPosition // store the position selected on the opponent grid
 let isSunk //holds the sunk status for the ships
 let opponentShipName //holds the opponent ship name befor it changes to Y or N
+let paused //is the game is paused or not
 
 /*------------------------ Cached Element References ------------------------*/
 //caching the main containors
@@ -115,6 +116,11 @@ const shipCEl = document.querySelector('#C')
 const shipDEl = document.querySelector('#D')
 const shipEEl = document.querySelector('#E')
 
+//caching the pause-resume components
+const pauseResumeBtnEl = document.querySelector('#pause-resume')
+const popUp1El = document.querySelector('.pop-up')
+const popUp2El = document.querySelector('.pop-up2')
+
 /*-------------------------------- Functions --------------------------------*/
 //the initialization function 
 function init() {
@@ -129,6 +135,7 @@ function init() {
     selectedPosition = ''
     isSunk = false
     opponentShipName = ''
+    paused = false
     render()
 }
 
@@ -156,6 +163,9 @@ function handleStatusBtnClick() {
     shipCEl.addEventListener('dragstart', handleDragStart)
     shipDEl.addEventListener('dragstart', handleDragStart)
     shipEEl.addEventListener('dragstart', handleDragStart)
+
+    pauseResumeBtnEl.addEventListener('click', handlePauseResumeToggle)
+    pauseResumeBtnEl.classList.remove('hidden')
 
     if (gameStatus === 'off') {
         gameStatus = 'placing'
@@ -681,7 +691,7 @@ function handleDragOver(event) {
             if (i === startingPoition && x < playerShip.shipLength) {
                 if (grid[i] === '') {
                     grid2Els[i].style.backgroundColor = 'green'
-                    startingPoition+=10
+                    startingPoition += 10
                     x++
                 }
             }
@@ -689,6 +699,39 @@ function handleDragOver(event) {
                 grid2Els[i].style.backgroundColor = ''
             }
         }
+    }
+}
+
+function handlePauseResumeToggle() {
+    if (pauseResumeBtnEl.textContent === 'Resume') {
+        if (gameStatus === 'placing') {
+            itemsBoxEL.classList.remove('hidden')
+            board2El.classList.remove('hidden')
+            popUp1El.classList.add('hidden')
+            popUp2El.classList.add('hidden')
+        }
+        else {
+            board1El.classList.remove('hidden')
+            board2El.classList.remove('hidden')
+            popUp1El.classList.add('hidden')
+            popUp2El.classList.add('hidden')
+        }
+        pauseResumeBtnEl.textContent = 'Pause'
+    }
+    else {
+        if (gameStatus === 'placing') {
+            itemsBoxEL.classList.add('hidden')
+            board2El.classList.add('hidden')
+            popUp1El.classList.remove('hidden')
+            popUp2El.classList.remove('hidden')
+        }
+        else {
+            board1El.classList.add('hidden')
+            board2El.classList.add('hidden')
+            popUp1El.classList.remove('hidden')
+            popUp2El.classList.remove('hidden')
+        }
+        pauseResumeBtnEl.textContent = 'Resume'
     }
 }
 
