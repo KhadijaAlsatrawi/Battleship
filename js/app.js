@@ -286,19 +286,16 @@ function placingShips(event) {
             removeItemFromBox()
             updatePlayerGrid()
             UpdateplayerShips()
+            message = "Ship is placed. Select another ship"
         }
         else {
             message = `Cannot place the ship here. Select a Ship`
-            const ships = turn === 1 ? player1Ships : player2Ships
 
             playerShip.startPosition[0] = ''
             playerShip.startPosition[1] = ''
 
             playerShip.endPosition[0] = ''
             playerShip.endPosition[1] = ''
-
-            const index = ships.indexOf((oneShip => oneShip.name === playerShip.name))
-            ships.splice(index, 1, playerShip)
         }
     }
     selectedShip = ''
@@ -406,18 +403,15 @@ function checkForOpponentShip() {
 function checkSunkShip() {
     const opponentGrid = turn === 1 ? player2GridOpponent : player1GridOpponent
     // if the element in the grid is not empty or Y or N then check if it includes the ship name
-    if (opponentShipName !== '' && opponentShipName !== 'Y' && opponentShipName !== 'N')
+    if (opponentShipName !== '' && opponentShipName !== 'Y' && opponentShipName !== 'N') {
         //if the grid includes the ship name return true if it does not return false
         if (opponentGrid.includes(opponentShipName)) {
-            console.log(`checkSunkShip function: false`)
-            console.log(opponentGrid)
             isSunk = false
         }
         else {
-            console.log(`checkSunkShip function: false`)
             isSunk = true
-            console.log(opponentGrid)
         }
+    }
 }
 
 //change the name and change the variable based on it
@@ -435,7 +429,6 @@ function checkBoardUpdated() {
 function checkForWinner() {
     const opponentShips = turn === 1 ? player2Ships : player1Ships
     const allSunk = opponentShips.every(oneShip => oneShip.status === 'sunk')
-    console.log(allSunk)
     if (allSunk) {
         gameStatus = 'over'
     }
@@ -559,30 +552,65 @@ function updateBoard() {
 
     for (let i = 0; i < grid.length; i++) {
         if (grid[i] === 'A') {
-            grid2Els[i].innerHTML = '<img src="./img1.png" alt="A">'
+            grid2Els[i].classList.add('img-1')
+
+            grid2Els[i].textContent = ''
+            grid2Els[i].classList.remove('img-2')
+            grid2Els[i].classList.remove('img-3')
+            grid2Els[i].classList.remove('img-4')
+            grid2Els[i].classList.remove('img-5')
         }
         else if (grid[i] === 'B') {
-            grid2Els[i].style.backgroundColor = 'orange'
+            grid2Els[i].classList.add('img-2')
+
+            grid2Els[i].textContent = ''
+            grid2Els[i].classList.remove('img-1')
+            grid2Els[i].classList.remove('img-3')
+            grid2Els[i].classList.remove('img-4')
+            grid2Els[i].classList.remove('img-5')
         }
         else if (grid[i] === 'C') {
-            grid2Els[i].style.backgroundColor = 'yellow'
+            grid2Els[i].classList.add('img-3')
+
+            grid2Els[i].textContent = ''
+            grid2Els[i].classList.remove('img-1')
+            grid2Els[i].classList.remove('img-2')
+            grid2Els[i].classList.remove('img-4')
+            grid2Els[i].classList.remove('img-5')
         }
         else if (grid[i] === 'D') {
-            grid2Els[i].style.backgroundColor = 'green'
+            grid2Els[i].classList.add('img-4')
+
+            grid2Els[i].textContent = ''
+            grid2Els[i].classList.remove('img-1')
+            grid2Els[i].classList.remove('img-2')
+            grid2Els[i].classList.remove('img-3')
+            grid2Els[i].classList.remove('img-5')
         }
         else if (grid[i] === 'E') {
-            grid2Els[i].style.backgroundColor = 'blue'
+            grid2Els[i].classList.add('img-5')
+
+            grid2Els[i].textContent = ''
+            grid2Els[i].classList.remove('img-1')
+            grid2Els[i].classList.remove('img-2')
+            grid2Els[i].classList.remove('img-3')
+            grid2Els[i].classList.remove('img-4')
         }
         else {
             grid2Els[i].textContent = ''
             grid2Els[i].style.color = 'white'
-            grid2Els[i].style.backgroundColor = 'white'
+            grid2Els[i].classList.remove('img-1')
+            grid2Els[i].classList.remove('img-2')
+            grid2Els[i].classList.remove('img-3')
+            grid2Els[i].classList.remove('img-4')
+            grid2Els[i].classList.remove('img-5')
         }
     }
+
     for (let i = 0; i < grid2.length; i++) {
         if (grid2[i] === 'N') {
             grid2Els[i].textContent = 'X'
-            grid2Els[i].style.color = 'black'
+            grid2Els[i].style.color = '#ffffff'
         }
         else if (grid2[i] === 'Y') {
             grid2Els[i].textContent = 'X'
@@ -606,14 +634,6 @@ function updateBoard() {
             grid1Els[i].style.backgroundColor = 'none'
         }
     }
-}
-
-function updatePlayerBoard() {
-
-}
-
-function updateOpponentBoard() {
-
 }
 
 // change the text inside the message section in htnl

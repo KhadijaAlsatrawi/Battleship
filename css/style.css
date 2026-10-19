@@ -1,13 +1,15 @@
-*{
+* {
     box-sizing: border-box;
+    color: #352a22;
 }
 
-body{
- padding: 20px;
- text-align: center;
-} 
+body {
+    padding: 20px;
+    text-align: center;
+    background-color: #e6d8c7;
+}
 
-#game-wrapper{
+#game-wrapper {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -18,32 +20,34 @@ body{
 
 .game-board {
     display: flex;
-    width: 35%;
+    width: 40%;
     flex-direction: row;
     flex-wrap: wrap;
-} 
+}
 
 .game-board div {
-    border: 1px solid black;
+    border: 1px solid #352a22;
     font-size: 30px;
     text-align: center;
     width: 10%;
     aspect-ratio: 1/1;
 }
 
-.grid-box, .grid-box2{
+.grid-box,
+.grid-box2 {
     padding: 0;
 }
 
-.grid-box img, .grid-box2 img{
+.grid-box img,
+.grid-box2 img {
     width: 100%;
     aspect-ratio: 1/1;
     margin: 0;
 }
 
-.items-box{
-    border: 1px solid black;
-    width: 35%;
+.items-box {
+    border: 1px solid #352a22;
+    width: 40%;
     aspect-ratio: 1/1;
     display: flex;
     flex-direction: column;
@@ -52,40 +56,84 @@ body{
     gap: 8%;
 }
 
-.item{
-    border: 1px solid black;
+.item {
+    border: 1px solid #352a22;
     height: 10%;
 }
 
-#mid-div{
-    width: 30%
-}
-
-#A{
-    width: 50%;
-    background-color: purple;
-}
-
-#B{
-    width: 40%;
-    background-color: orange;
-}
-
-#C{
-    width: 30%;
-    background-color: yellow;
-}
-
-#D{
-    width: 30%;
-    background-color: green;
-}
-
-#E{
+#mid-div {
     width: 20%;
-    background-color: blue;
+    margin: 0 8px;
 }
 
-.hidden{
+#A {
+    width: 50%;
+    background-image: url('../assets/img1.jpeg');
+    background-size: 47px;
+}
+
+#B {
+    width: 40%;
+    background-image: url('../assets/img2.jpeg');
+    background-size: 47px;
+}
+
+#C {
+    width: 30%;
+    background-image: url('../assets/img3.jpeg');
+    background-size: 47px;
+}
+
+#D {
+    width: 30%;
+    background-image: url('../assets/img4.jpg');
+    background-size: 47px;
+}
+
+#E {
+    width: 20%;
+    background-image: url('../assets/img5.jpeg');
+    background-size: 47px;
+}
+
+.item-sqr {
+    width: 10%;
+}
+
+.img-1{
+    background-image: url('../assets/img1.jpeg');
+    background-size: 100%;
+}
+
+.img-2{
+    background-image: url('../assets/img2.jpeg');
+    background-size: 100%;
+}
+
+.img-3{
+    background-image: url('../assets/img3.jpeg');
+    background-size: 100%;
+}
+
+.img-4{
+    background-image: url('../assets/img4.jpg');
+    background-size: 100%;
+}
+
+.img-5{
+    background-image: url('../assets/img5.jpeg');
+    background-size: 100%;
+}
+
+button{
+    background-color: #3F3229;
+    color: #e6d8c7;
+    height: 25px;
+    border: none;
+    border-radius: 15px;
+    margin: 9px 0;
+}
+
+.hidden {
     display: none;
-} 
+}
