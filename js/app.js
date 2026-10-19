@@ -1,32 +1,32 @@
 /*-------------------------------- Constants --------------------------------*/
-//a constant containing the type of ships
-const ships = [
-    { name: 'A', shipLength: 5 },
-    { name: 'B', shipLength: 4 },
-    { name: 'C', shipLength: 3 },
-    { name: 'D', shipLength: 3 },
-    { name: 'E', shipLength: 2 }
+//a constant containing the type of Treat
+const Treats = [
+    { name: 'A', treatLength: 5 },
+    { name: 'B', treatLength: 4 },
+    { name: 'C', treatLength: 3 },
+    { name: 'D', treatLength: 3 },
+    { name: 'E', treatLength: 2 }
 ]
 
-// 2 constants to store the player ships and their informatins
-const player1Ships = [
-    { name: 'A', startPosition: ['', ''], endPosition: ['', ''], shipLength: 5, status: 'standing' },
-    { name: 'B', startPosition: ['', ''], endPosition: ['', ''], shipLength: 4, status: 'standing' },
-    { name: 'C', startPosition: ['', ''], endPosition: ['', ''], shipLength: 3, status: 'standing' },
-    { name: 'D', startPosition: ['', ''], endPosition: ['', ''], shipLength: 3, status: 'standing' },
-    { name: 'E', startPosition: ['', ''], endPosition: ['', ''], shipLength: 2, status: 'standing' }
+// 2 constants to store the player Treat and their informatins
+const player1Treats = [
+    { name: 'A', startPosition: ['', ''], endPosition: ['', ''], treatLength: 5, status: 'standing' },
+    { name: 'B', startPosition: ['', ''], endPosition: ['', ''], treatLength: 4, status: 'standing' },
+    { name: 'C', startPosition: ['', ''], endPosition: ['', ''], treatLength: 3, status: 'standing' },
+    { name: 'D', startPosition: ['', ''], endPosition: ['', ''], treatLength: 3, status: 'standing' },
+    { name: 'E', startPosition: ['', ''], endPosition: ['', ''], treatLength: 2, status: 'standing' }
 ]
 
-const player2Ships = [
-    { name: 'A', startPosition: ['', ''], endPosition: ['', ''], shipLength: 5, status: 'standing' },
-    { name: 'B', startPosition: ['', ''], endPosition: ['', ''], shipLength: 4, status: 'standing' },
-    { name: 'C', startPosition: ['', ''], endPosition: ['', ''], shipLength: 3, status: 'standing' },
-    { name: 'D', startPosition: ['', ''], endPosition: ['', ''], shipLength: 3, status: 'standing' },
-    { name: 'E', startPosition: ['', ''], endPosition: ['', ''], shipLength: 2, status: 'standing' }
+const player2Treats = [
+    { name: 'A', startPosition: ['', ''], endPosition: ['', ''], treatLength: 5, status: 'standing' },
+    { name: 'B', startPosition: ['', ''], endPosition: ['', ''], treatLength: 4, status: 'standing' },
+    { name: 'C', startPosition: ['', ''], endPosition: ['', ''], treatLength: 3, status: 'standing' },
+    { name: 'D', startPosition: ['', ''], endPosition: ['', ''], treatLength: 3, status: 'standing' },
+    { name: 'E', startPosition: ['', ''], endPosition: ['', ''], treatLength: 2, status: 'standing' }
 ]
 
 // 2 constints to store the player grids
-// it is ment to contain the ships and the hits done my the other player
+// it is ment to contain the Treat and the hits done my the other player
 // to be display on the board
 const player1Grid = [
     '', '', '', '', '', '', '', '', '', '',
@@ -84,14 +84,14 @@ const player2GridOpponent = [
 let turn //store player turn
 let gameStatus // store the game status
 let boardUpdated // used to check is the board have been updated (true / false)
-let selectedShip // store the initially selected ship relevent only befor the actul game start
+let selectedTreat // store the initially selected treat relevent only befor the actul game start
 let message // holds the massege (errors, instruction to be displayed)
-let player1Ship //store the information of the ship befor updating the array
-let player2Ship //store the information of the ship befor updating the array
-let shipDirection //horizontal (H) or vertical (V)
+let player1Treat //store the information of the treat befor updating the array
+let player2Treat //store the information of the treat befor updating the array
+let treatDirection //horizontal (H) or vertical (V)
 let selectedPosition // store the position selected on the opponent grid
-let isSunk //holds the sunk status for the ships
-let opponentShipName //holds the opponent ship name befor it changes to Y or N
+let isEaten //holds the eaten status for the Treat
+let opponentTreatName //holds the opponent treat name befor it changes to Y or N
 let paused //is the game is paused or not
 
 /*------------------------ Cached Element References ------------------------*/
@@ -106,16 +106,16 @@ const grid2Els = document.querySelectorAll('.grid-box2')
 
 //caching the elements of the middle container
 const playerTurnEl = document.querySelector('#player-turn')
-const shipDirectionBtnEl = document.querySelector('#ship-direction')
+const treatDirectionBtnEl = document.querySelector('#treat-direction')
 const gameBtnEl = document.querySelector('#game-btn')
 const messageEl = document.querySelector('#message')
 
-//caching the ships 
-const shipAEl = document.querySelector('#A')
-const shipBEl = document.querySelector('#B')
-const shipCEl = document.querySelector('#C')
-const shipDEl = document.querySelector('#D')
-const shipEEl = document.querySelector('#E')
+//caching the Treat 
+const treatAEl = document.querySelector('#A')
+const treatBEl = document.querySelector('#B')
+const treatCEl = document.querySelector('#C')
+const treatDEl = document.querySelector('#D')
+const treatEEl = document.querySelector('#E')
 
 //caching the pause-resume components
 const pauseResumeBtnEl = document.querySelector('#pause-resume')
@@ -128,15 +128,14 @@ function init() {
     turn = 1
     gameStatus = 'off'
     boardUpdated = false
-    selectedShip = ''
+    selectedTreat = ''
     message = ''
-    player1Ship = ''
-    player2Ship = ''
-    shipDirection = 'H'
-    isSunk = false
+    player1Treat = ''
+    player2Treat = ''
+    treatDirection = 'H'
+    isEaten = false
     selectedPosition = ''
-    isSunk = false
-    opponentShipName = ''
+    opponentTreatName = ''
     paused = false
     render()
 }
@@ -147,6 +146,7 @@ function render() {
         message = `Player ${turn} is the winner`
         playerTurnEl.textContent = ''
     }
+
     updateBoard()
     updateMessage()
 }
@@ -154,17 +154,17 @@ function render() {
 //function to handle clicking on the game button
 function handleStatusBtnClick() {
     //adds the event listners when the game start
-    shipAEl.addEventListener('click', handleShipClick)
-    shipBEl.addEventListener('click', handleShipClick)
-    shipCEl.addEventListener('click', handleShipClick)
-    shipDEl.addEventListener('click', handleShipClick)
-    shipEEl.addEventListener('click', handleShipClick)
+    treatAEl.addEventListener('click', handletreatClick)
+    treatBEl.addEventListener('click', handletreatClick)
+    treatCEl.addEventListener('click', handletreatClick)
+    treatDEl.addEventListener('click', handletreatClick)
+    treatEEl.addEventListener('click', handletreatClick)
 
-    shipAEl.addEventListener('dragstart', handleDragStart)
-    shipBEl.addEventListener('dragstart', handleDragStart)
-    shipCEl.addEventListener('dragstart', handleDragStart)
-    shipDEl.addEventListener('dragstart', handleDragStart)
-    shipEEl.addEventListener('dragstart', handleDragStart)
+    treatAEl.addEventListener('dragstart', handleDragStart)
+    treatBEl.addEventListener('dragstart', handleDragStart)
+    treatCEl.addEventListener('dragstart', handleDragStart)
+    treatDEl.addEventListener('dragstart', handleDragStart)
+    treatEEl.addEventListener('dragstart', handleDragStart)
 
     pauseResumeBtnEl.addEventListener('click', handlePauseResumeToggle)
     pauseResumeBtnEl.classList.remove('hidden')
@@ -172,8 +172,8 @@ function handleStatusBtnClick() {
     if (gameStatus === 'off') {
         gameStatus = 'placing'
         gameBtnEl.textContent = 'Next'
-        shipDirectionBtnEl.classList.remove('hidden')
-        message = `Select a ship`
+        treatDirectionBtnEl.classList.remove('hidden')
+        message = `Select a treat`
     }
     else if (gameStatus === 'placing') {
         if (checkAllItemsPlaced()) {
@@ -182,7 +182,7 @@ function handleStatusBtnClick() {
             }
             else {
                 gameStatus = 'playing'
-                shipDirectionBtnEl.classList.add('hidden')
+                treatDirectionBtnEl.classList.add('hidden')
                 message = `Select a position on the opponent grid to hit`
                 for (let sqr of grid2Els) {
                     sqr.removeEventListener('click', handleGrid2Click)
@@ -200,25 +200,25 @@ function handleStatusBtnClick() {
     render()
 }
 
-//saves the selected ship in the selected ship variable
-function handleShipClick(event) {
-    if (selectedShip === '') {
+//saves the selected treat in the selected treat variable
+function handletreatClick(event) {
+    if (selectedTreat === '') {
         if (event.target.id === 'A') {
-            selectedShip = ships.find(oneShip => oneShip.name === 'A')
+            selectedTreat = Treats.find(onetreat => onetreat.name === 'A')
         }
         else if (event.target.id === 'B') {
-            selectedShip = ships.find(oneShip => oneShip.name === 'B')
+            selectedTreat = Treats.find(onetreat => onetreat.name === 'B')
         }
         else if (event.target.id === 'C') {
-            selectedShip = ships.find(oneShip => oneShip.name === 'C')
+            selectedTreat = Treats.find(onetreat => onetreat.name === 'C')
         }
         else if (event.target.id === 'D') {
-            selectedShip = ships.find(oneShip => oneShip.name === 'D')
+            selectedTreat = Treats.find(onetreat => onetreat.name === 'D')
         }
         else if (event.target.id === 'E') {
-            selectedShip = ships.find(oneShip => oneShip.name === 'E')
+            selectedTreat = Treats.find(onetreat => onetreat.name === 'E')
         }
-        message = `You selecter ${selectedShip.name} place the ship`
+        message = `You selecter ${selectedTreat.name} place the treat`
     }
     render()
 }
@@ -228,14 +228,15 @@ function handleGrid1Click(event) {
     const saparetedID = event.target.id.split('-')
     selectedPosition = Number(saparetedID.join(''))
 
-    const opponentShip = checkForOpponentShip(selectedPosition)
+    const opponenttreat = checkForOpponentTreat(selectedPosition)
     const opponentGrid = turn === 1 ? player2GridOpponent : player1GridOpponent
-    opponentShipName = opponentGrid[selectedPosition]
+    opponentTreatName = opponentGrid[selectedPosition]
+    console.log(opponentTreatName)
 
     checkBoardUpdated()
-    updateOpponentGrid(selectedPosition, opponentShip)
-    checkSunkShip()
-    updateShipStatus()
+    updateOpponentGrid(selectedPosition, opponenttreat)
+    checkEatenTreat()
+    updateTreatStatus()
     checkForWinner()
     for (let sqr of grid1Els) {
         sqr.removeEventListener('click', handleGrid1Click)
@@ -257,141 +258,141 @@ function handleGrid1Click(event) {
 function handleGrid2Click(event) {
     //if the game in placing status
     if (gameStatus === 'placing') {
-        if (selectedShip !== '') {
+        if (selectedTreat !== '') {
             message = 'Select a starting position'
-            placingShips(event)
+            placingTreat(event)
         }
         else {
-            message = "Select a ship"
+            message = "Select a treat"
         }
     }
     render()
 }
 
-//changing the direction on the ship placement
-function handleShipDirectionClick(event) {
+//changing the direction on the treat placement
+function handleTreatDirectionClick(event) {
     if (event.target.textContent === 'Horizontal') {
-        shipDirection = 'V'
-        shipDirectionBtnEl.textContent = 'Vertical'
+        treatDirection = 'V'
+        treatDirectionBtnEl.textContent = 'Vertical'
     }
     else {
-        shipDirection = 'H'
-        shipDirectionBtnEl.textContent = 'Horizontal'
+        treatDirection = 'H'
+        treatDirectionBtnEl.textContent = 'Horizontal'
     }
 }
 
 // checks the starting position, and store it if empty, check the ending position, conferm the length, store the ending position
-function placingShips(event) {
-    retrieveShip()
-    const playerShip = turn === 1? player1Ship : player2Ship
+function placingTreat(event) {
+    retrievetreat()
+    const playerTreat = turn === 1? player1Treat : player2Treat
     //split the ID to Row and column values
     const saparetedID = event.target.id.split('-')
     //check if the starting position is empty
-    if (playerShip.startPosition[0] === '' && playerShip.startPosition[1] === '') {
+    if (playerTreat.startPosition[0] === '' && playerTreat.startPosition[1] === '') {
         //store the starting position
-        playerShip.startPosition[0] = saparetedID[0]
-        playerShip.startPosition[1] = saparetedID[1]
+        playerTreat.startPosition[0] = saparetedID[0]
+        playerTreat.startPosition[1] = saparetedID[1]
 
         //if the direction is horizontal then the row does not change only the columns
         //if the direction is not horizontal then the column does not change only the rows
-        endRow = shipDirection === 'H' ? (saparetedID[0]) : String(Number(saparetedID[0]) + Number(playerShip.shipLength) - 1)
-        endCol = shipDirection === 'H' ? String(Number(saparetedID[1]) + Number(playerShip.shipLength) - 1) : (playerShip.startPosition[1])
+        endRow = treatDirection === 'H' ? (saparetedID[0]) : String(Number(saparetedID[0]) + Number(playerTreat.treatLength) - 1)
+        endCol = treatDirection === 'H' ? String(Number(saparetedID[1]) + Number(playerTreat.treatLength) - 1) : (playerTreat.startPosition[1])
 
         //store the ending position
-        playerShip.endPosition[0] = endRow
-        playerShip.endPosition[1] = endCol
+        playerTreat.endPosition[0] = endRow
+        playerTreat.endPosition[1] = endCol
 
         if (checkValidPosition()) {
             removeItemFromBox()
             updatePlayerGrid()
-            message = "Ship is placed. Select another ship"
+            message = "treat is placed. Select another treat"
         }
         else {
-            message = `Cannot place the ship here. Select a Ship`
+            message = `Cannot place the treat here. Select a treat`
 
-            playerShip.startPosition[0] = ''
-            playerShip.startPosition[1] = ''
+            playerTreat.startPosition[0] = ''
+            playerTreat.startPosition[1] = ''
 
-            playerShip.endPosition[0] = ''
-            playerShip.endPosition[1] = ''
+            playerTreat.endPosition[0] = ''
+            playerTreat.endPosition[1] = ''
         }
     }
-    selectedShip = ''
+    selectedTreat = ''
     render()
 }
 
-//retrevie the object of the player ship form the player ships array
-function retrieveShip() {
+//retrevie the object of the player treat form the player Treat array
+function retrievetreat() {
     if (turn === 1) {
-        player1Ship = player1Ships.find(oneShip => oneShip.name === selectedShip.name)
+        player1Treat = player1Treats.find(onetreat => onetreat.name === selectedTreat.name)
     }
     else {
-        player2Ship = player2Ships.find(oneShip => oneShip.name === selectedShip.name)
+        player2Treat = player2Treats.find(onetreat => onetreat.name === selectedTreat.name)
     }
 }
 
-function retrieveOppnentShip() {
-    //check the turn and place the correct ships in the ships const
-    let ship
+function retrieveOppnenttreat() {
+    //check the turn and place the correct Treat in the Treat const
+    let treat
     if (turn === 1) {
-        player2Ship = player2Ships.find(oneShip => oneShip.name === opponentShipName)
+        player2Treat = player2Treats.find(onetreat => onetreat.name === opponentTreatName)
     }
     else {
-        player1Ship = player1Ships.find(oneShip => oneShip.name === opponentShipName)
+        player1Treat = player1Treats.find(onetreat => onetreat.name === opponentTreatName)
     }
 }
 
 function checkValidPosition() {
     //check the turn and place the correct grid in the grid const
     const grid = turn === 1 ? player1Grid : player2Grid
-    const playerShip = turn === 1? player1Ship : player2Ship
-    //store the ship position
-    const startingPoition = Number(playerShip.startPosition[0]) * 10 + Number(playerShip.startPosition[1])
-    const endingPosition = Number(playerShip.endPosition[0]) * 10 + Number(playerShip.endPosition[1])
+    const playerTreat = turn === 1? player1Treat : player2Treat
+    //store the treat position
+    const startingPoition = Number(playerTreat.startPosition[0]) * 10 + Number(playerTreat.startPosition[1])
+    const endingPosition = Number(playerTreat.endPosition[0]) * 10 + Number(playerTreat.endPosition[1])
 
-    if (shipDirection === 'H') {
-        //store a slice of the grid where the ship is placed
-        const selectedShipPosition = grid.slice(startingPoition, (endingPosition + 1))
+    if (treatDirection === 'H') {
+        //store a slice of the grid where the treat is placed
+        const selectedTreatPosition = grid.slice(startingPoition, (endingPosition + 1))
 
-        //if all boxes are ermpty then return true (ship can be placed here)
-        const emptySpace = selectedShipPosition.every(onePosition => onePosition === '')
+        //if all boxes are ermpty then return true (treat can be placed here)
+        const emptySpace = selectedTreatPosition.every(onePosition => onePosition === '')
 
         //end calumn cannot be < then start column, the rows should be the same and emptySpace should be true
-        return playerShip.endPosition[1] > playerShip.startPosition[1] && playerShip.startPosition[0] === playerShip.endPosition[0] && emptySpace
+        return playerTreat.endPosition[1] > playerTreat.startPosition[1] && playerTreat.startPosition[0] === playerTreat.endPosition[0] && emptySpace
     }
     else {
         //create the array to check for empty places
-        const selectedShipPosition = []
+        const selectedTreatPosition = []
 
         //save the startingPoition as a variable to change it 
         let loopIndex = startingPoition
 
-        //for the length of the ship 
-        for (let i = 0; i < playerShip.shipLength; i++) {
+        //for the length of the treat 
+        for (let i = 0; i < playerTreat.treatLength; i++) {
 
             //push the grid element using the index
-            selectedShipPosition.push(grid[loopIndex])
+            selectedTreatPosition.push(grid[loopIndex])
 
             //add 10 to the endex to rech the next row
             loopIndex += 10
         }
 
-        //if all boxes are ermpty then return true (ship can be placed here)
-        const emptySpace = selectedShipPosition.every(onePosition => onePosition === '')
+        //if all boxes are ermpty then return true (treat can be placed here)
+        const emptySpace = selectedTreatPosition.every(onePosition => onePosition === '')
 
         //end row cannot be < then start row, the columns should be the same and emptySpace should be true
-        return playerShip.endPosition[0] > playerShip.startPosition[0] && playerShip.startPosition[1] === playerShip.endPosition[1] && emptySpace
+        return playerTreat.endPosition[0] > playerTreat.startPosition[0] && playerTreat.startPosition[1] === playerTreat.endPosition[1] && emptySpace
     }
 }
 
-//checks if all ships are placed 
+//checks if all Treat are placed 
 function checkAllItemsPlaced() {
-    //store the ships array based on the player turn
-    const ships = turn === 1 ? player1Ships : player2Ships
+    //store the Treat array based on the player turn
+    const Treat = turn === 1 ? player1Treats : player2Treats
     let checkitems = []
     //return true if no end position is empty
-    for (const oneShip of ships) {
-        if (oneShip.endPosition[0] === '') {
+    for (const onetreat of Treat) {
+        if (onetreat.endPosition[0] === '') {
             checkitems.push(false)
         }
         else {
@@ -406,8 +407,8 @@ function checkAllItemsPlaced() {
     }
 }
 
-//this function checks if the opponent has a ship in the selected position
-function checkForOpponentShip() {
+//this function checks if the opponent has a treat in the selected position
+function checkForOpponentTreat() {
     const grid = turn === 1 ? player2GridOpponent : player1GridOpponent
     if (grid[selectedPosition] !== '') {
         return 'Y'
@@ -417,17 +418,18 @@ function checkForOpponentShip() {
     }
 }
 
-//this function checks if the opponent ship sunk or not
-function checkSunkShip() {
+//this function checks if the opponent treat eaten or not
+function checkEatenTreat() {
     const opponentGrid = turn === 1 ? player2GridOpponent : player1GridOpponent
-    // if the element in the grid is not empty or Y or N then check if it includes the ship name
-    if (opponentShipName !== '' && opponentShipName !== 'Y' && opponentShipName !== 'N') {
-        //if the grid includes the ship name return true if it does not return false
-        if (opponentGrid.includes(opponentShipName)) {
-            isSunk = false
+    // if the element in the grid is not empty or Y or N then check if it includes the treat name
+    if (opponentTreatName !== '' && opponentTreatName !== 'Y' && opponentTreatName !== 'N') {
+        //if the grid includes the treat name return true if it does not return false
+        console.log(opponentGrid.includes(opponentTreatName))
+        if (opponentGrid.includes(opponentTreatName)) {
+            isEaten = false
         }
         else {
-            isSunk = true
+            isEaten = true
         }
     }
 }
@@ -435,7 +437,7 @@ function checkSunkShip() {
 //change the name and change the variable based on it
 // if it is Y or N means the player selected this place (sqr) befor
 function checkBoardUpdated() {
-    if (opponentShipName === 'Y' || opponentShipName === 'N') {
+    if (opponentTreatName === 'Y' || opponentTreatName === 'N') {
         boardUpdated = false
     }
     else {
@@ -443,33 +445,33 @@ function checkBoardUpdated() {
     }
 }
 
-//checks if the opponent chip are all sunk
+//checks if the opponent chip are all eaten
 function checkForWinner() {
-    const opponentShips = turn === 1 ? player2Ships : player1Ships
-    const allSunk = opponentShips.every(oneShip => oneShip.status === 'sunk')
-    if (allSunk) {
+    const opponentTreat = turn === 1 ? player2Treats : player1Treats
+    const allEaten = opponentTreat.every(onetreat => onetreat.status === 'eaten')
+    if (allEaten) {
         gameStatus = 'over'
     }
 }
 
 //removes the items from the item box
 function removeItemFromBox() {
-    if (selectedShip.name === 'A') {
-        shipAEl.classList.add('hidden')
+    if (selectedTreat.name === 'A') {
+        treatAEl.classList.add('hidden')
     }
-    else if (selectedShip.name === 'B') {
-        shipBEl.classList.add('hidden')
+    else if (selectedTreat.name === 'B') {
+        treatBEl.classList.add('hidden')
     }
-    else if (selectedShip.name === 'C') {
-        shipCEl.classList.add('hidden')
+    else if (selectedTreat.name === 'C') {
+        treatCEl.classList.add('hidden')
     }
-    else if (selectedShip.name === 'D') {
-        shipDEl.classList.add('hidden')
+    else if (selectedTreat.name === 'D') {
+        treatDEl.classList.add('hidden')
     }
-    else if (selectedShip.name === 'E') {
-        shipEEl.classList.add('hidden')
+    else if (selectedTreat.name === 'E') {
+        treatEEl.classList.add('hidden')
     }
-    selectedShip = ''
+    selectedTreat = ''
 }
 
 //switch the user
@@ -485,15 +487,15 @@ function switchTurn() {
     }
 }
 
-// remove the hidden class from the ships for player 2
-// if both players placed their ships then hide the item box and show board 1 
+// remove the hidden class from the Treat for player 2
+// if both players placed their Treat then hide the item box and show board 1 
 function setGamePlayBoards() {
     if (gameStatus === 'placing' && boardUpdated) {
-        shipAEl.classList.remove('hidden')
-        shipBEl.classList.remove('hidden')
-        shipCEl.classList.remove('hidden')
-        shipDEl.classList.remove('hidden')
-        shipEEl.classList.remove('hidden')
+        treatAEl.classList.remove('hidden')
+        treatBEl.classList.remove('hidden')
+        treatCEl.classList.remove('hidden')
+        treatDEl.classList.remove('hidden')
+        treatEEl.classList.remove('hidden')
     }
     else if (gameStatus === 'playing') {
         board1El.classList.remove('hidden')
@@ -501,25 +503,30 @@ function setGamePlayBoards() {
     }
 }
 
-//update the ship status in the player ship array 
-function updateShipStatus() {
-    const playerShip = turn === 1? player2Ship : player1Ship
+//update the treat status in the player treat array 
+function updateTreatStatus() {
+    let playerTreat = turn === 1 ? player2Treat : player1Treat
+    const opponentTreats = turn === 1? player2Treats : player1Treats
 
-    if (isSunk) {
-        //retrieve the ship and update the status
-        retrieveOppnentShip()
-        playerShip.status = 'sunk'
+    if (isEaten) {
+        //retrieve the treat and update the status
+        retrieveOppnenttreat()
+        playerTreat.status = 'eaten'
+
+        //find the index of the ship and replase it with the updated ship
+        let index = opponentTreats.findIndex(oneShip => oneShip.name === playerTreat.name)
+        opponentTreats.splice(index, 1, playerTreat)
 
         //cleare the name
-        selectedShip.name = ''
-        isSunk = false
+        selectedTreat = ''
+        isEaten = false
     }
 }
 
 //fill the opponent grid with eather Y or N
-function updateOpponentGrid(selectedPosition, opponentShip) {
+function updateOpponentGrid(selectedPosition, opponenttreat) {
     const grid = turn === 1 ? player2GridOpponent : player1GridOpponent
-    grid.fill(opponentShip, selectedPosition, Number(selectedPosition) + 1)
+    grid.fill(opponenttreat, selectedPosition, Number(selectedPosition) + 1)
 }
 
 //updated the playerGrid arrays
@@ -527,23 +534,23 @@ function updatePlayerGrid() {
     if (gameStatus === 'placing') {
         //check the turn and place the correct grid in the grid const
         const grid = turn === 1 ? player1Grid : player2Grid
-        const playerShip = turn === 1? player1Ship : player2Ship
+        const playerTreat = turn === 1? player1Treat : player2Treat
 
-        const startPosition = (Number(playerShip.startPosition[0]) * 10) + Number(playerShip.startPosition[1])
-        const endPosition = (Number(playerShip.endPosition[0]) * 10) + Number(playerShip.endPosition[1])
+        const startPosition = (Number(playerTreat.startPosition[0]) * 10) + Number(playerTreat.startPosition[1])
+        const endPosition = (Number(playerTreat.endPosition[0]) * 10) + Number(playerTreat.endPosition[1])
 
-        const colDiff = Number(playerShip.endPosition[1]) - Number(playerShip.startPosition[1])
-        const rowDiff = Number(playerShip.endPosition[0]) - Number(playerShip.startPosition[0])
+        const colDiff = Number(playerTreat.endPosition[1]) - Number(playerTreat.startPosition[1])
+        const rowDiff = Number(playerTreat.endPosition[0]) - Number(playerTreat.startPosition[0])
 
         if (rowDiff === 0 && colDiff !== 0) {
             //horizontal change
-            grid.fill(playerShip.name, startPosition, (endPosition + 1))
+            grid.fill(playerTreat.name, startPosition, (endPosition + 1))
         }
         else if (colDiff === 0 && rowDiff !== 0) {
             let loopIndex = startPosition
             //vertical change
             for (let i = 0; i <= rowDiff; i++) {
-                grid.fill(playerShip.name, loopIndex, (loopIndex + 1))
+                grid.fill(playerTreat.name, loopIndex, (loopIndex + 1))
                 loopIndex += 10
             }
         }
@@ -559,7 +566,7 @@ function updateBoard() {
     const grid2 = turn === 1 ? player1GridOpponent : player2GridOpponent
     const opponentGrid = turn === 1 ? player2Grid : player1Grid
     const opponentGrid2 = turn === 1 ? player2GridOpponent : player1GridOpponent
-    const opponentShips = turn === 1 ? player2Ships : player1Ships
+    const opponentTreats = turn === 1 ? player2Treats : player1Treats
 
     for (let i = 0; i < grid.length; i++) {
         if (grid[i] === 'A') {
@@ -632,10 +639,14 @@ function updateBoard() {
 
     //for each item in the opponent grid
     for (let i = 0; i < opponentGrid.length; i++) {
+        console.log(`opponentGrid[i]`, opponentGrid[i])
         if (opponentGrid[i] !== '') {
-            const curOpponentShip = opponentShips.find(oneShip => oneShip.name === opponentGrid[i])
-            if (curOpponentShip.status === 'sunk') {
-                if (curOpponentShip.name === 'A') {
+            const curOpponenttreat = opponentTreats.find(onetreat => onetreat.name === opponentGrid[i])
+            console.log(`curOpponenttreat`, curOpponenttreat)
+            console.log(`curOpponenttreat.status`, curOpponenttreat.status)
+            if (curOpponenttreat.status === 'eaten') {
+                
+                if (curOpponenttreat.name === 'A') {
                     grid1Els[i].classList.add('img-1')
 
                     grid1Els[i].textContent = ''
@@ -644,7 +655,7 @@ function updateBoard() {
                     grid1Els[i].classList.remove('img-4')
                     grid1Els[i].classList.remove('img-5')
                 }
-                else if (curOpponentShip.name === 'B') {
+                else if (curOpponenttreat.name === 'B') {
                     grid1Els[i].classList.add('img-2')
 
                     grid1Els[i].textContent = ''
@@ -653,7 +664,7 @@ function updateBoard() {
                     grid1Els[i].classList.remove('img-4')
                     grid1Els[i].classList.remove('img-5')
                 }
-                else if (curOpponentShip.name === 'C') {
+                else if (curOpponenttreat.name === 'C') {
                     grid1Els[i].classList.add('img-3')
 
                     grid1Els[i].textContent = ''
@@ -662,7 +673,7 @@ function updateBoard() {
                     grid1Els[i].classList.remove('img-4')
                     grid1Els[i].classList.remove('img-5')
                 }
-                else if (curOpponentShip.name === 'D') {
+                else if (curOpponenttreat.name === 'D') {
                     grid1Els[i].classList.add('img-4')
 
                     grid1Els[i].textContent = ''
@@ -671,7 +682,7 @@ function updateBoard() {
                     grid1Els[i].classList.remove('img-3')
                     grid1Els[i].classList.remove('img-5')
                 }
-                else if (curOpponentShip.name === 'E') {
+                else if (curOpponenttreat.name === 'E') {
                     grid1Els[i].classList.add('img-5')
 
                     grid1Els[i].textContent = ''
@@ -716,22 +727,22 @@ function updateMessage() {
 }
 
 function handleDragStart(event) {
-    selectedShip = ships.find(oneShip => oneShip.name === event.target.id)
+    selectedTreat = Treats.find(onetreat => onetreat.name === event.target.id)
 }
 
 function handleDragOver(event) {
     event.preventDefault()
     const saparetedID = event.target.id.split('-')
     let startingPoition = Number(saparetedID[0]) * 10 + Number(saparetedID[1])
-    retrieveShip()
+    retrievetreat()
 
     const grid = turn === 1 ? player1Grid : player2Grid
-    const playerShip = turn === 1? player2Ship : player2Ship
+    const playerTreat = turn === 1? player1Treat : player2Treat
 
     let x = 0
-    if (shipDirection === 'H') {
+    if (treatDirection === 'H') {
         for (let i = 0; i < grid.length; i++) {
-            if (i === startingPoition && x < playerShip.shipLength) {
+            if (i === startingPoition && x < playerTreat.treatLength) {
                 if (grid[i] === '') {
                     grid2Els[i].style.backgroundColor = 'green'
                     startingPoition++
@@ -745,7 +756,7 @@ function handleDragOver(event) {
     }
     else {
         for (let i = 0; i < grid.length; i++) {
-            if (i === startingPoition && x < playerShip.shipLength) {
+            if (i === startingPoition && x < playerTreat.treatLength) {
                 if (grid[i] === '') {
                     grid2Els[i].style.backgroundColor = 'green'
                     startingPoition += 10
@@ -802,8 +813,8 @@ for (const sqr of grid1Els) {
 for (const sqr of grid2Els) {
     sqr.addEventListener('click', handleGrid2Click)
     sqr.addEventListener('dragover', handleDragOver)
-    sqr.addEventListener('drop', placingShips)
+    sqr.addEventListener('drop', placingTreat)
 }
 
 gameBtnEl.addEventListener('click', handleStatusBtnClick)
-shipDirectionBtnEl.addEventListener('click', handleShipDirectionClick)
+treatDirectionBtnEl.addEventListener('click', handleTreatDirectionClick)
