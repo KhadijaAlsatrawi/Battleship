@@ -151,6 +151,12 @@ function handleStatusBtnClick() {
     shipDEl.addEventListener('click', handleShipClick)
     shipEEl.addEventListener('click', handleShipClick)
 
+    shipAEl.addEventListener('dragstart', handleDragStart)
+    shipBEl.addEventListener('dragstart', handleDragStart)
+    shipCEl.addEventListener('dragstart', handleDragStart)
+    shipDEl.addEventListener('dragstart', handleDragStart)
+    shipEEl.addEventListener('dragstart', handleDragStart)
+
     if (gameStatus === 'off') {
         gameStatus = 'placing'
         gameBtnEl.textContent = 'Next'
@@ -299,6 +305,7 @@ function placingShips(event) {
         }
     }
     selectedShip = ''
+    render()
 }
 
 //retrevie the object of the player ship form the player ships array
@@ -598,6 +605,7 @@ function updateBoard() {
         }
         else {
             grid2Els[i].textContent = ''
+            grid2Els[i].style.backgroundColor = ''
             grid2Els[i].style.color = 'white'
             grid2Els[i].classList.remove('img-1')
             grid2Els[i].classList.remove('img-2')
@@ -630,8 +638,8 @@ function updateBoard() {
         }
         else {
             grid1Els[i].textContent = ''
-            grid1Els[i].style.color = 'none'
-            grid1Els[i].style.backgroundColor = 'none'
+            grid1Els[i].style.color = ''
+            grid1Els[i].style.backgroundColor = ''
         }
     }
 }
@@ -639,6 +647,49 @@ function updateBoard() {
 // change the text inside the message section in htnl
 function updateMessage() {
     messageEl.textContent = message
+}
+
+function handleDragStart(event) {
+    selectedShip = ships.find(oneShip => oneShip.name === event.target.id)
+}
+
+function handleDragOver(event) {
+    event.preventDefault()
+    const saparetedID = event.target.id.split('-')
+    let startingPoition = Number(saparetedID[0]) * 10 + Number(saparetedID[1])
+    retrieveShip()
+
+    const grid = turn === 1 ? player1Grid : player2Grid
+
+    let x = 0
+    if (shipDirection === 'H') {
+        for (let i = 0; i < grid.length; i++) {
+            if (i === startingPoition && x < playerShip.shipLength) {
+                if (grid[i] === '') {
+                    grid2Els[i].style.backgroundColor = 'green'
+                    startingPoition++
+                    x++
+                }
+            }
+            else {
+                grid2Els[i].style.backgroundColor = ''
+            }
+        }
+    }
+    else {
+        for (let i = 0; i < grid.length; i++) {
+            if (i === startingPoition && x < playerShip.shipLength) {
+                if (grid[i] === '') {
+                    grid2Els[i].style.backgroundColor = 'green'
+                    startingPoition+=10
+                    x++
+                }
+            }
+            else {
+                grid2Els[i].style.backgroundColor = ''
+            }
+        }
+    }
 }
 
 /*----------------------------- Event Listeners -----------------------------*/
@@ -650,6 +701,8 @@ for (const sqr of grid1Els) {
 
 for (const sqr of grid2Els) {
     sqr.addEventListener('click', handleGrid2Click)
+    sqr.addEventListener('dragover', handleDragOver)
+    sqr.addEventListener('drop', placingShips)
 }
 
 gameBtnEl.addEventListener('click', handleStatusBtnClick)

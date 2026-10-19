@@ -125,17 +125,19 @@
     </div>
 
     <div class="items-box">
-      <div id="A" class="item">
+      <div id="A" class="item" draggable="true">
       </div>
-      <div id="B" class="item">
+      <div id="B" class="item" draggable="true">
       </div>
-      <div id="C" class="item">
+      <div id="C" class="item" draggable="true">
       </div>
-      <div id="D" class="item">
+      <div id="D" class="item" draggable="true">
       </div>
-      <div id="E" class="item">
+      <div id="E" class="item" draggable="true">
       </div>
     </div>
+
+    <div id="pop-up" class="hidden">Game is paused</div>
 
     <div id="mid-div">
       <h1>Battle Ship</h1>
@@ -144,6 +146,7 @@
       <button id="ship-direction" class="hidden">Horizontal</button>
       <br>
       <button id="game-btn"> Start </button>
+      <button id="pause-resume" class="hidden">Pause</button>
     </div>
     <div id="board2" class="game-board">
       <div id="0-0" class="grid-box2"></div>
@@ -256,6 +259,8 @@
       <div id="9-8" class="grid-box2"></div>
       <div id="9-9" class="grid-box2"></div>
     </div>
+
+    <div id="pop-up" class="hidden">Game is paused</div>
   </div>
 </body>
 
