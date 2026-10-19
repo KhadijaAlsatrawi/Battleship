@@ -86,7 +86,8 @@ let gameStatus // store the game status
 let boardUpdated // used to check is the board have been updated (true / false)
 let selectedShip // store the initially selected ship relevent only befor the actul game start
 let message // holds the massege (errors, instruction to be displayed)
-let playerShip //store the information of the ship befor updating the array
+let player1Ship //store the information of the ship befor updating the array
+let player2Ship //store the information of the ship befor updating the array
 let shipDirection //horizontal (H) or vertical (V)
 let selectedPosition // store the position selected on the opponent grid
 let isSunk //holds the sunk status for the ships
@@ -129,7 +130,8 @@ function init() {
     boardUpdated = false
     selectedShip = ''
     message = ''
-    playerShip = ''
+    player1Ship = ''
+    player2Ship = ''
     shipDirection = 'H'
     isSunk = false
     selectedPosition = ''
@@ -227,7 +229,7 @@ function handleGrid1Click(event) {
     selectedPosition = Number(saparetedID.join(''))
 
     const opponentShip = checkForOpponentShip(selectedPosition)
-    const opponentGrid = turn === 1 ? player1Grid : player2Grid
+    const opponentGrid = turn === 1 ? player2GridOpponent : player1GridOpponent
     opponentShipName = opponentGrid[selectedPosition]
 
     checkBoardUpdated()
@@ -281,6 +283,7 @@ function handleShipDirectionClick(event) {
 // checks the starting position, and store it if empty, check the ending position, conferm the length, store the ending position
 function placingShips(event) {
     retrieveShip()
+    const playerShip = turn === 1? player1Ship : player2Ship
     //split the ID to Row and column values
     const saparetedID = event.target.id.split('-')
     //check if the starting position is empty
@@ -301,7 +304,6 @@ function placingShips(event) {
         if (checkValidPosition()) {
             removeItemFromBox()
             updatePlayerGrid()
-            UpdateplayerShips()
             message = "Ship is placed. Select another ship"
         }
         else {
@@ -321,10 +323,10 @@ function placingShips(event) {
 //retrevie the object of the player ship form the player ships array
 function retrieveShip() {
     if (turn === 1) {
-        playerShip = player1Ships.find(oneShip => oneShip.name === selectedShip.name)
+        player1Ship = player1Ships.find(oneShip => oneShip.name === selectedShip.name)
     }
     else {
-        playerShip = player2Ships.find(oneShip => oneShip.name === selectedShip.name)
+        player2Ship = player2Ships.find(oneShip => oneShip.name === selectedShip.name)
     }
 }
 
@@ -332,18 +334,17 @@ function retrieveOppnentShip() {
     //check the turn and place the correct ships in the ships const
     let ship
     if (turn === 1) {
-        ship = player1Ships.find(oneShip => oneShip.name === opponentShipName)
+        player2Ship = player2Ships.find(oneShip => oneShip.name === opponentShipName)
     }
     else {
-        ship = player2Ships.find(oneShip => oneShip.name === opponentShipName)
+        player1Ship = player1Ships.find(oneShip => oneShip.name === opponentShipName)
     }
-    return ship
 }
 
 function checkValidPosition() {
     //check the turn and place the correct grid in the grid const
     const grid = turn === 1 ? player1Grid : player2Grid
-
+    const playerShip = turn === 1? player1Ship : player2Ship
     //store the ship position
     const startingPoition = Number(playerShip.startPosition[0]) * 10 + Number(playerShip.startPosition[1])
     const endingPosition = Number(playerShip.endPosition[0]) * 10 + Number(playerShip.endPosition[1])
@@ -500,28 +501,18 @@ function setGamePlayBoards() {
     }
 }
 
-//deplace the ship in player ships array with the playerShip variable
-function UpdateplayerShips() {
-    //check the turn and place the correct ships in the ships const
-    const ships = turn === 1 ? player1Ships : player2Ships
-    let index = ships.findIndex(oneShip => oneShip.name === playerShip.name)
-    ships.splice(index, 1, playerShip)
-}
-
 //update the ship status in the player ship array 
 function updateShipStatus() {
-    const opponentShips = turn === 1 ? player2Ships : player1Ships
+    const playerShip = turn === 1? player2Ship : player1Ship
 
     if (isSunk) {
         //retrieve the ship and update the status
-        playerShip = retrieveOppnentShip()
+        retrieveOppnentShip()
         playerShip.status = 'sunk'
 
-        //find the index of the ship and replase it with the updated ship
-        let index = opponentShips.findIndex(oneShip => oneShip.name === playerShip.name)
-        opponentShips.splice(index, 1, playerShip)
         //cleare the name
         selectedShip.name = ''
+        isSunk = false
     }
 }
 
@@ -536,6 +527,7 @@ function updatePlayerGrid() {
     if (gameStatus === 'placing') {
         //check the turn and place the correct grid in the grid const
         const grid = turn === 1 ? player1Grid : player2Grid
+        const playerShip = turn === 1? player1Ship : player2Ship
 
         const startPosition = (Number(playerShip.startPosition[0]) * 10) + Number(playerShip.startPosition[1])
         const endPosition = (Number(playerShip.endPosition[0]) * 10) + Number(playerShip.endPosition[1])
@@ -565,7 +557,9 @@ function updateBoard() {
     //check the turn and place the correct grid in the grid const
     const grid = turn === 1 ? player1Grid : player2Grid
     const grid2 = turn === 1 ? player1GridOpponent : player2GridOpponent
-    const opponentGrid = turn === 1 ? player2GridOpponent : player1GridOpponent
+    const opponentGrid = turn === 1 ? player2Grid : player1Grid
+    const opponentGrid2 = turn === 1 ? player2GridOpponent : player1GridOpponent
+    const opponentShips = turn === 1 ? player2Ships : player1Ships
 
     for (let i = 0; i < grid.length; i++) {
         if (grid[i] === 'A') {
@@ -638,11 +632,73 @@ function updateBoard() {
 
     //for each item in the opponent grid
     for (let i = 0; i < opponentGrid.length; i++) {
-        if (opponentGrid[i] === 'N') {
+        if (opponentGrid[i] !== '') {
+            const curOpponentShip = opponentShips.find(oneShip => oneShip.name === opponentGrid[i])
+            if (curOpponentShip.status === 'sunk') {
+                if (curOpponentShip.name === 'A') {
+                    grid1Els[i].classList.add('img-1')
+
+                    grid1Els[i].textContent = ''
+                    grid1Els[i].classList.remove('img-2')
+                    grid1Els[i].classList.remove('img-3')
+                    grid1Els[i].classList.remove('img-4')
+                    grid1Els[i].classList.remove('img-5')
+                }
+                else if (curOpponentShip.name === 'B') {
+                    grid1Els[i].classList.add('img-2')
+
+                    grid1Els[i].textContent = ''
+                    grid1Els[i].classList.remove('img-1')
+                    grid1Els[i].classList.remove('img-3')
+                    grid1Els[i].classList.remove('img-4')
+                    grid1Els[i].classList.remove('img-5')
+                }
+                else if (curOpponentShip.name === 'C') {
+                    grid1Els[i].classList.add('img-3')
+
+                    grid1Els[i].textContent = ''
+                    grid1Els[i].classList.remove('img-1')
+                    grid1Els[i].classList.remove('img-2')
+                    grid1Els[i].classList.remove('img-4')
+                    grid1Els[i].classList.remove('img-5')
+                }
+                else if (curOpponentShip.name === 'D') {
+                    grid1Els[i].classList.add('img-4')
+
+                    grid1Els[i].textContent = ''
+                    grid1Els[i].classList.remove('img-1')
+                    grid1Els[i].classList.remove('img-2')
+                    grid1Els[i].classList.remove('img-3')
+                    grid1Els[i].classList.remove('img-5')
+                }
+                else if (curOpponentShip.name === 'E') {
+                    grid1Els[i].classList.add('img-5')
+
+                    grid1Els[i].textContent = ''
+                    grid1Els[i].classList.remove('img-1')
+                    grid1Els[i].classList.remove('img-2')
+                    grid1Els[i].classList.remove('img-3')
+                    grid1Els[i].classList.remove('img-4')
+                }
+            }
+
+        }
+        else {
+            grid1Els[i].textContent = ''
+            grid1Els[i].style.backgroundColor = ''
+            grid1Els[i].style.color = 'white'
+            grid1Els[i].classList.remove('img-1')
+            grid1Els[i].classList.remove('img-2')
+            grid1Els[i].classList.remove('img-3')
+            grid1Els[i].classList.remove('img-4')
+            grid1Els[i].classList.remove('img-5')
+        }
+
+        if (opponentGrid2[i] === 'N') {
             grid1Els[i].textContent = 'X'
             grid1Els[i].style.color = 'black'
         }
-        else if (opponentGrid[i] === 'Y') {
+        else if (opponentGrid2[i] === 'Y') {
             grid1Els[i].textContent = 'X'
             grid1Els[i].style.color = 'red'
         }
@@ -670,6 +726,7 @@ function handleDragOver(event) {
     retrieveShip()
 
     const grid = turn === 1 ? player1Grid : player2Grid
+    const playerShip = turn === 1? player2Ship : player2Ship
 
     let x = 0
     if (shipDirection === 'H') {
