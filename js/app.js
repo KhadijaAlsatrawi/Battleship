@@ -94,6 +94,10 @@ let isEaten //holds the eaten status for the Treat
 let opponentTreatName //holds the opponent treat name befor it changes to Y or N
 
 /*------------------------ Cached Element References ------------------------*/
+const darkModeBtnEl = document.querySelector('#dark-mode')
+const gameBoardEls = document.querySelectorAll('.game-board ')
+const itemEls = document.querySelectorAll('item')
+
 //caching the main containors
 const board1El = document.querySelector('#board')
 const board2El = document.querySelector('#board2')
@@ -147,6 +151,8 @@ function render() {
         winnerEl.classList.remove('hidden')
         message = ''
         gameBtnEl.textContent = 'Reset'
+        gameBtnEl.classList.remove('hidden')
+        pauseResumeBtnEl.add('hidden')
         playerTurnEl.textContent = ''
         for (const sqr of grid1Els) {
             sqr.removeEventListener('click', handleGrid1Click)
@@ -155,6 +161,43 @@ function render() {
 
     updateBoard()
     updateMessage()
+}
+
+function handleDarkModeToggle() {
+    if (darkModeBtnEl.textContent === 'Dark mode') {
+        darkModeBtnEl.textContent = 'Light mode'
+        document.body.classList.add('dark-mode-toggle')
+        for (const board of gameBoardEls) {
+            board.classList.add('dark-mode-toggle')
+        }
+        itemsBoxEL.classList.add('dark-mode-toggle')
+        for (const item of itemEls) {
+            item.classList.add('dark-mode-toggle')
+        }
+        gameBtnEl.classList.add('dark-mode-toggle')
+        pauseResumeBtnEl.classList.add('dark-mode-toggle')
+        treatDirectionBtnEl.classList.add('dark-mode-toggle')
+        darkModeBtnEl.classList.add('dark-mode-toggle')
+        popUp1El.classList.add('dark-mode-toggle')
+        popUp2El.classList.add('dark-mode-toggle')
+    }
+    else {
+        darkModeBtnEl.textContent = 'Dark mode'
+        document.body.classList.remove('dark-mode-toggle')
+        for (const board of gameBoardEls) {
+            board.classList.remove('dark-mode-toggle')
+        }
+        itemsBoxEL.classList.remove('dark-mode-toggle')
+        for (const item of itemEls) {
+            item.classList.remove('dark-mode-toggle')
+        }
+        gameBtnEl.classList.remove('dark-mode-toggle')
+        pauseResumeBtnEl.classList.remove('dark-mode-toggle')
+        treatDirectionBtnEl.classList.remove('dark-mode-toggle')
+        darkModeBtnEl.classList.remove('dark-mode-toggle')
+        popUp1El.classList.remove('dark-mode-toggle')
+        popUp2El.classList.remove('dark-mode-toggle')
+    }
 }
 
 //function to handle clicking on the game button
@@ -256,6 +299,7 @@ function handleDragOver(event) {
     }
 }
 
+// handles the Pause Resume logic
 function handlePauseResumeToggle() {
     if (pauseResumeBtnEl.textContent === 'Resume') {
         if (gameStatus === 'placing') {
@@ -436,7 +480,6 @@ function retrieveOppnentTreat() {
         player1Treat = player1Treats.find(onetreat => onetreat.name === opponentTreatName)
     }
 }
-
 
 function checkValidPosition() {
     //check the turn and place the correct grid in the grid const
@@ -698,9 +741,15 @@ function updateBoard() {
     for (let i = 0; i < opponentGrid.length; i++) {
         // if the treat is eaten the show it to the opponent as well
         if (opponentGrid[i] !== '') {
+            grid1Els[i].textContent = ''
+            grid1Els[i].classList.remove('img-1')
+            grid1Els[i].classList.remove('img-2')
+            grid1Els[i].classList.remove('img-3')
+            grid1Els[i].classList.remove('img-4')
+            grid1Els[i].classList.remove('img-5')
+
             const curOpponentTreat = opponentTreats.find(onetreat => onetreat.name === opponentGrid[i])
             if (curOpponentTreat.status === 'eaten') {
-
                 if (curOpponentTreat.name === 'A') {
                     grid1Els[i].classList.add('img-1')
 
@@ -788,6 +837,8 @@ function updateMessage() {
 
 /*----------------------------- Event Listeners -----------------------------*/
 init()
+
+darkModeBtnEl.addEventListener('click', handleDarkModeToggle)
 
 for (const sqr of grid1Els) {
     sqr.addEventListener('click', handleGrid1Click)
