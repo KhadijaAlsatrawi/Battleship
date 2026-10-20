@@ -151,6 +151,13 @@ function init() {
     winnerEl.textContent = ''
     winnerEl.classList.add('hidden')
     pauseResumeBtnEl.classList.add('hidden')
+    board1El.classList.add('hidden')
+    itemsBoxEL.classList.remove('hidden')
+    treatAEl.classList.remove('hidden')
+    treatBEl.classList.remove('hidden')
+    treatCEl.classList.remove('hidden')
+    treatDEl.classList.remove('hidden')
+    treatEEl.classList.remove('hidden')
 
     player1Grid.fill('', 0, 101)
     player2Grid.fill('', 0, 101)
