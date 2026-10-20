@@ -27,3 +27,5 @@ This is a classic battleship game but with cats and treats. The players can plac
 ## Future Enhancements
 1. Computer vs Player
 
+## Credit
+[W3Schools](https://www.w3schools.com/html/html5_draganddrop.asp)
