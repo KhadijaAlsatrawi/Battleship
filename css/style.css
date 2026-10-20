@@ -27,7 +27,8 @@ button {
     align-items: center;
 }
 
-#dark-mode, #audio-btn  {
+#dark-mode,
+#audio-btn {
     display: flex;
     align-items: center;
     margin: 10px 0;
@@ -190,4 +191,16 @@ button {
 .dark-mode-toggle .pop-up,
 .dark-mode-toggle .pop-up2 {
     border: 1px solid #352a22;
+}
+
+.Y {
+    color: red;
+}
+
+.N {
+    color: #352a22;
+}
+
+.dark-mode-toggle .N{
+    color: #e6d8c7;
 }

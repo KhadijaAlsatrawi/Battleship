@@ -146,6 +146,33 @@ function init() {
     selectedPosition = ''
     opponentTreatName = ''
     paused = false
+
+    gameBtnEl.textContent = 'Start'
+    winnerEl.textContent = ''
+    winnerEl.classList.add('hidden')
+    pauseResumeBtnEl.classList.add('hidden')
+
+    player1Grid.fill('', 0, 101)
+    player2Grid.fill('', 0, 101)
+    player1GridOpponent.fill('', 0, 101)
+    player2GridOpponent.fill('', 0, 101)
+
+    for (const treat of player1Treats) {
+        treat.startPosition[0] = ''
+        treat.startPosition[1] = ''
+        treat.endPosition[0] = ''
+        treat.endPosition[1] = ''
+        treat.status = 'standing'
+    }
+
+    for (const treat of player2Treats) {
+        treat.startPosition[0] = ''
+        treat.startPosition[1] = ''
+        treat.endPosition[0] = ''
+        treat.endPosition[1] = ''
+        treat.status = 'standing'
+    }
+
     render()
 }
 
@@ -154,16 +181,15 @@ function render() {
     if (gameStatus === 'over') {
         winnerEl.textContent = `Player ${turn} is the winner`
         winnerEl.classList.remove('hidden')
+        playerTurnEl.textContent = ''
         message = ''
         gameBtnEl.textContent = 'Reset'
         gameBtnEl.classList.remove('hidden')
-        pauseResumeBtnEl.add('hidden')
-        playerTurnEl.textContent = ''
+        pauseResumeBtnEl.classList.add('hidden')
         for (const sqr of grid1Els) {
             sqr.removeEventListener('click', handleGrid1Click)
         }
     }
-
     updateBoard()
     updateMessage()
 }
@@ -239,6 +265,7 @@ function handleStatusBtnClick() {
         gameStatus = 'placing'
         gameBtnEl.textContent = 'Next'
         treatDirectionBtnEl.classList.remove('hidden')
+        playerTurnEl.textContent = 'It is Player 1 turn'
         message = `Select a treat`
     }
     else if (gameStatus === 'placing') {
@@ -405,7 +432,7 @@ function handleGrid1Click(event) {
             for (let sqr of grid1Els) {
                 sqr.addEventListener('click', handleGrid1Click)
             }
-        }, 5000)
+        }, 3000)
 
         message = ''
         render()
@@ -560,7 +587,6 @@ function checkForOpponentTreat() {
 function checkEatenTreat() {
     const opponentGrid = turn === 1 ? player2GridOpponent : player1GridOpponent
     if (opponentTreatName !== '' && opponentTreatName !== 'Y' && opponentTreatName !== 'N') {
-        console.log(opponentGrid.includes(opponentTreatName))
         if (opponentGrid.includes(opponentTreatName)) {
             isEaten = false
         }
@@ -733,7 +759,6 @@ function updateBoard() {
         else {
             grid2Els[i].textContent = ''
             grid2Els[i].style.backgroundColor = ''
-            grid2Els[i].style.color = 'white'
             grid2Els[i].classList.remove('img-1')
             grid2Els[i].classList.remove('img-2')
             grid2Els[i].classList.remove('img-3')
@@ -746,11 +771,13 @@ function updateBoard() {
     for (let i = 0; i < grid2.length; i++) {
         if (grid2[i] === 'N') {
             grid2Els[i].textContent = 'X'
-            grid2Els[i].style.color = '#ffffff'
+            grid2Els[i].classList.add('N')
+            grid2Els[i].classList.remove('Y')
         }
         else if (grid2[i] === 'Y') {
             grid2Els[i].textContent = 'X'
-            grid2Els[i].style.color = 'red'
+            grid2Els[i].classList.add('Y')
+            grid2Els[i].classList.remove('N')
         }
     }
 
@@ -817,26 +844,30 @@ function updateBoard() {
         else {
             grid1Els[i].textContent = ''
             grid1Els[i].style.backgroundColor = ''
-            grid1Els[i].style.color = 'white'
             grid1Els[i].classList.remove('img-1')
             grid1Els[i].classList.remove('img-2')
             grid1Els[i].classList.remove('img-3')
             grid1Els[i].classList.remove('img-4')
             grid1Els[i].classList.remove('img-5')
+            grid1Els[i].classList.remove('Y')
+            grid1Els[i].classList.remove('N')
         }
 
         // update grid 1 based on the opponent grid 2 (hits on the opponent)
         if (opponentGrid2[i] === 'N') {
             grid1Els[i].textContent = 'X'
-            grid1Els[i].style.color = 'black'
+            grid1Els[i].classList.add('N')
+            grid1Els[i].classList.remove('Y')
         }
         else if (opponentGrid2[i] === 'Y') {
             grid1Els[i].textContent = 'X'
-            grid1Els[i].style.color = 'red'
+            grid1Els[i].classList.add('Y')
+            grid1Els[i].classList.remove('N')
         }
         else {
             grid1Els[i].textContent = ''
-            grid1Els[i].style.color = ''
+            grid1Els[i].classList.remove('N')
+            grid1Els[i].classList.remove('Y')
             grid1Els[i].style.backgroundColor = ''
             grid1Els[i].classList.remove('img-1')
             grid1Els[i].classList.remove('img-2')
