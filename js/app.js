@@ -92,7 +92,6 @@ let treatDirection //horizontal (H) or vertical (V)
 let selectedPosition // store the position selected on the opponent grid
 let isEaten //holds the eaten status for the Treat
 let opponentTreatName //holds the opponent treat name befor it changes to Y or N
-let paused //is the game is paused or not
 
 /*------------------------ Cached Element References ------------------------*/
 //caching the main containors
@@ -109,6 +108,7 @@ const playerTurnEl = document.querySelector('#player-turn')
 const treatDirectionBtnEl = document.querySelector('#treat-direction')
 const gameBtnEl = document.querySelector('#game-btn')
 const messageEl = document.querySelector('#message')
+const winnerEl = document.querySelector('#winner')
 
 //caching the Treat 
 const treatAEl = document.querySelector('#A')
@@ -143,8 +143,14 @@ function init() {
 //a function to render/update the HTML
 function render() {
     if (gameStatus === 'over') {
-        message = `Player ${turn} is the winner`
+        winnerEl.textContent = `Player ${turn} is the winner`
+        winnerEl.classList.remove('hidden')
+        message = ''
+        gameBtnEl.textContent = 'Reset'
         playerTurnEl.textContent = ''
+        for (const sqr of grid1Els) {
+            sqr.removeEventListener('click', handleGrid1Click)
+        }
     }
 
     updateBoard()
@@ -194,7 +200,12 @@ function handleStatusBtnClick() {
         else {
             boardUpdated = false
         }
+    } 
+    else if (gameStatus === 'over') {
+        init()
     }
+
+
     switchTurn()
     setGamePlayBoards()
     render()
@@ -218,7 +229,7 @@ function handletreatClick(event) {
         else if (event.target.id === 'E') {
             selectedTreat = Treats.find(onetreat => onetreat.name === 'E')
         }
-        message = `You selecter ${selectedTreat.name} place the treat`
+        message = `You selected ${selectedTreat.name} place the treat`
     }
     render()
 }
@@ -226,32 +237,39 @@ function handletreatClick(event) {
 //clicking on the oponent grid
 function handleGrid1Click(event) {
     const saparetedID = event.target.id.split('-')
-    selectedPosition = Number(saparetedID.join(''))
+    selectedPosition = Number(saparetedID[0]) * 10 + Number(saparetedID[1])
 
-    const opponenttreat = checkForOpponentTreat(selectedPosition)
+    const opponenttreat = checkForOpponentTreat()
     const opponentGrid = turn === 1 ? player2GridOpponent : player1GridOpponent
     opponentTreatName = opponentGrid[selectedPosition]
-    console.log(opponentTreatName)
 
-    checkBoardUpdated()
-    updateOpponentGrid(selectedPosition, opponenttreat)
-    checkEatenTreat()
-    updateTreatStatus()
-    checkForWinner()
-    for (let sqr of grid1Els) {
-        sqr.removeEventListener('click', handleGrid1Click)
-    }
-    const switchTurnInterval = setInterval(() => {
-        switchTurn()
+    if (opponentTreatName === 'Y' || opponentTreatName === 'N') {
+        message = 'You selected the position befor, select another'
         render()
-        clearInterval(switchTurnInterval)
-
+    }
+    else {
+        boardUpdated = true
+        updateOpponentGrid(selectedPosition, opponenttreat)
+        checkEatenTreat()
+        updateTreatStatus()
+        checkForWinner()
         for (let sqr of grid1Els) {
-            sqr.addEventListener('click', handleGrid1Click)
+            sqr.removeEventListener('click', handleGrid1Click)
         }
-    }, 5000)
+        const switchTurnInterval = setInterval(() => {
+            switchTurn()
+            render()
+            clearInterval(switchTurnInterval)
 
-    render()
+            for (let sqr of grid1Els) {
+                sqr.addEventListener('click', handleGrid1Click)
+            }
+        }, 5000)
+
+        message = ''
+
+        render()
+    }
 }
 
 //clicking on your own grid
@@ -283,8 +301,8 @@ function handleTreatDirectionClick(event) {
 
 // checks the starting position, and store it if empty, check the ending position, conferm the length, store the ending position
 function placingTreat(event) {
-    retrievetreat()
-    const playerTreat = turn === 1? player1Treat : player2Treat
+    retrieveTreat()
+    const playerTreat = turn === 1 ? player1Treat : player2Treat
     //split the ID to Row and column values
     const saparetedID = event.target.id.split('-')
     //check if the starting position is empty
@@ -295,8 +313,8 @@ function placingTreat(event) {
 
         //if the direction is horizontal then the row does not change only the columns
         //if the direction is not horizontal then the column does not change only the rows
-        endRow = treatDirection === 'H' ? (saparetedID[0]) : String(Number(saparetedID[0]) + Number(playerTreat.treatLength) - 1)
-        endCol = treatDirection === 'H' ? String(Number(saparetedID[1]) + Number(playerTreat.treatLength) - 1) : (playerTreat.startPosition[1])
+        const endRow = treatDirection === 'H' ? (saparetedID[0]) : String(Number(saparetedID[0]) + Number(playerTreat.treatLength) - 1)
+        const endCol = treatDirection === 'H' ? String(Number(saparetedID[1]) + Number(playerTreat.treatLength) - 1) : (playerTreat.startPosition[1])
 
         //store the ending position
         playerTreat.endPosition[0] = endRow
@@ -322,7 +340,7 @@ function placingTreat(event) {
 }
 
 //retrevie the object of the player treat form the player Treat array
-function retrievetreat() {
+function retrieveTreat() {
     if (turn === 1) {
         player1Treat = player1Treats.find(onetreat => onetreat.name === selectedTreat.name)
     }
@@ -331,7 +349,7 @@ function retrievetreat() {
     }
 }
 
-function retrieveOppnenttreat() {
+function retrieveOppnentTreat() {
     //check the turn and place the correct Treat in the Treat const
     let treat
     if (turn === 1) {
@@ -345,7 +363,7 @@ function retrieveOppnenttreat() {
 function checkValidPosition() {
     //check the turn and place the correct grid in the grid const
     const grid = turn === 1 ? player1Grid : player2Grid
-    const playerTreat = turn === 1? player1Treat : player2Treat
+    const playerTreat = turn === 1 ? player1Treat : player2Treat
     //store the treat position
     const startingPoition = Number(playerTreat.startPosition[0]) * 10 + Number(playerTreat.startPosition[1])
     const endingPosition = Number(playerTreat.endPosition[0]) * 10 + Number(playerTreat.endPosition[1])
@@ -434,17 +452,6 @@ function checkEatenTreat() {
     }
 }
 
-//change the name and change the variable based on it
-// if it is Y or N means the player selected this place (sqr) befor
-function checkBoardUpdated() {
-    if (opponentTreatName === 'Y' || opponentTreatName === 'N') {
-        boardUpdated = false
-    }
-    else {
-        boardUpdated = true
-    }
-}
-
 //checks if the opponent chip are all eaten
 function checkForWinner() {
     const opponentTreat = turn === 1 ? player2Treats : player1Treats
@@ -485,6 +492,7 @@ function switchTurn() {
             boardUpdated = false
         }
     }
+    render()
 }
 
 // remove the hidden class from the Treat for player 2
@@ -505,17 +513,12 @@ function setGamePlayBoards() {
 
 //update the treat status in the player treat array 
 function updateTreatStatus() {
-    let playerTreat = turn === 1 ? player2Treat : player1Treat
-    const opponentTreats = turn === 1? player2Treats : player1Treats
 
     if (isEaten) {
         //retrieve the treat and update the status
-        retrieveOppnenttreat()
+        retrieveOppnentTreat()
+        const playerTreat = turn === 1 ? player2Treat : player1Treat
         playerTreat.status = 'eaten'
-
-        //find the index of the ship and replase it with the updated ship
-        let index = opponentTreats.findIndex(oneShip => oneShip.name === playerTreat.name)
-        opponentTreats.splice(index, 1, playerTreat)
 
         //cleare the name
         selectedTreat = ''
@@ -534,7 +537,7 @@ function updatePlayerGrid() {
     if (gameStatus === 'placing') {
         //check the turn and place the correct grid in the grid const
         const grid = turn === 1 ? player1Grid : player2Grid
-        const playerTreat = turn === 1? player1Treat : player2Treat
+        const playerTreat = turn === 1 ? player1Treat : player2Treat
 
         const startPosition = (Number(playerTreat.startPosition[0]) * 10) + Number(playerTreat.startPosition[1])
         const endPosition = (Number(playerTreat.endPosition[0]) * 10) + Number(playerTreat.endPosition[1])
@@ -645,7 +648,7 @@ function updateBoard() {
             console.log(`curOpponenttreat`, curOpponenttreat)
             console.log(`curOpponenttreat.status`, curOpponenttreat.status)
             if (curOpponenttreat.status === 'eaten') {
-                
+
                 if (curOpponenttreat.name === 'A') {
                     grid1Els[i].classList.add('img-1')
 
@@ -717,6 +720,11 @@ function updateBoard() {
             grid1Els[i].textContent = ''
             grid1Els[i].style.color = ''
             grid1Els[i].style.backgroundColor = ''
+            grid1Els[i].classList.remove('img-1')
+            grid1Els[i].classList.remove('img-2')
+            grid1Els[i].classList.remove('img-3')
+            grid1Els[i].classList.remove('img-4')
+            grid1Els[i].classList.remove('img-5')
         }
     }
 }
@@ -734,10 +742,10 @@ function handleDragOver(event) {
     event.preventDefault()
     const saparetedID = event.target.id.split('-')
     let startingPoition = Number(saparetedID[0]) * 10 + Number(saparetedID[1])
-    retrievetreat()
+    retrieveTreat()
 
     const grid = turn === 1 ? player1Grid : player2Grid
-    const playerTreat = turn === 1? player1Treat : player2Treat
+    const playerTreat = turn === 1 ? player1Treat : player2Treat
 
     let x = 0
     if (treatDirection === 'H') {
