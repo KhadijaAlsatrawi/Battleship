@@ -18,7 +18,11 @@ This is a classic battleship game but with cats and treats. The players can plac
 6. As a user, I want to see the winner
 
 ## Screenshots
-
+![landing page](README-assets/landing-page.png)
+![dark mode](README-assets/dark-mode.png)
+![drag and drop the treat](README-assets/hover.png)
+![etean treat](README-assets/eaten-treat.png)
+![winning](README-assets/winner.png)
 
 ## Future Enhancements
 1. Computer vs Player
