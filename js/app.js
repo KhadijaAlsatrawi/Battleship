@@ -94,9 +94,14 @@ let isEaten //holds the eaten status for the Treat
 let opponentTreatName //holds the opponent treat name befor it changes to Y or N
 
 /*------------------------ Cached Element References ------------------------*/
+//caching top div elements
 const darkModeBtnEl = document.querySelector('#dark-mode')
+const audioBtnEl = document.querySelector('#audio-btn')
+const bgAudioEl = document.querySelector('#bg-audio')
+
+//caching for dark mode toggle
 const gameBoardEls = document.querySelectorAll('.game-board ')
-const itemEls = document.querySelectorAll('item')
+const itemEls = document.querySelectorAll('.item')
 
 //caching the main containors
 const board1El = document.querySelector('#board')
@@ -197,6 +202,18 @@ function handleDarkModeToggle() {
         darkModeBtnEl.classList.remove('dark-mode-toggle')
         popUp1El.classList.remove('dark-mode-toggle')
         popUp2El.classList.remove('dark-mode-toggle')
+    }
+}
+
+//handle playing the audio
+function handleAudioBtnClick() {
+    if (bgAudioEl.paused) {
+        bgAudioEl.play()
+        audioBtnEl.textContent = 'Pause audio'
+    }
+    else {
+        bgAudioEl.pause()
+        audioBtnEl.textContent = 'Play audio'
     }
 }
 
@@ -839,6 +856,7 @@ function updateMessage() {
 init()
 
 darkModeBtnEl.addEventListener('click', handleDarkModeToggle)
+audioBtnEl.addEventListener('click', handleAudioBtnClick)
 
 for (const sqr of grid1Els) {
     sqr.addEventListener('click', handleGrid1Click)

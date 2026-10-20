@@ -9,6 +9,30 @@ body {
     color: #352a22;
 }
 
+button {
+    background-color: #3F3229;
+    color: #e6d8c7;
+    height: 25px;
+    border: none;
+    border-radius: 15px;
+    margin: 9px 0;
+}
+
+#top-div {
+    width: 100%;
+    height: 10%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#dark-mode, #audio-btn  {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+}
+
 #game-wrapper {
     display: flex;
     flex-direction: row;
@@ -120,24 +144,9 @@ body {
     background-size: 100%;
 }
 
-button {
-    background-color: #3F3229;
-    color: #e6d8c7;
-    height: 25px;
-    border: none;
-    border-radius: 15px;
-    margin: 9px 0;
-}
-
 #mid-div {
     width: 20%;
     margin: 0 8px;
-}
-
-#dark-mode {
-    display: flex;
-    align-items: center;
-    margin: 10px 20px;
 }
 
 .pop-up,
@@ -156,7 +165,7 @@ button {
 }
 
 
-.dark-mode-toggle{
+.dark-mode-toggle {
     background-color: #352a22;
     color: #e6d8c7;
 }
